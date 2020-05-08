@@ -1,4 +1,4 @@
-package com.example.firebase_proyect;
+package com.example.firebase_proyect.Activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.firebase_proyect.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -43,8 +43,9 @@ public class RegistrarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registrar);
         References();
+        //inicia la autenticación con Firebase
         mAuth = FirebaseAuth.getInstance();
-
+        //boton de inciar sesión
         IniciarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,14 +65,14 @@ public class RegistrarActivity extends AppCompatActivity {
                 if( email.isEmpty() || name.isEmpty() || password.isEmpty()  ||Edad.isEmpty() || apellidos.isEmpty() ) {
 
 
-                    // something goes wrong : all fields must be filled
-                    // we need to display an error message
+                    // si algo sale mal: todos los campos deben llenarse
+                    // necesitamos mostrar un mensaje de error
                     showMessage("Por favor. Verifica tus datos") ;
 
                 }
                 else {
-                    // everything is ok and all fields are filled now we can start creating user account
-                    // CreateUserAccount method will try to create the user if the email is valid
+                    //todo está bien y todos los campos están llenos ahora podemos comenzar a crear una cuenta de usuario
+                    // El método CreateUserAccount intentará crear el usuario si el correo electrónico es válido
                     showMessage("Te has registrado correctamente, bienvenido");
 
                     CreateUserAccount(email,name,password);
@@ -101,16 +102,15 @@ public class RegistrarActivity extends AppCompatActivity {
     private void CreateUserAccount(String email, final String name, String password) {
 
 
-        // this method create user account with specific email and password
+        //este método crea una cuenta de usuario con correo electrónico y contraseña específicos
 
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
-                            // user account created successfully
+                            // el usuario creo la cuenta correctamente
                             showMessage("Se creo la cuenta");
-                            //startActivity(new Intent (getApplicationContext(),MainActivity.class));
                             // after we created user account we need to update his profile picture and name
                             updateUserInfo( name ,pickedImgUri,mAuth.getCurrentUser());
  }
@@ -138,8 +138,8 @@ public class RegistrarActivity extends AppCompatActivity {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                // image uploaded succesfully
-                // now we can get our image url
+                // imagen cargada con éxito
+                // ahora podemos obtener nuestra url de imagen
 
                 imageFilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
@@ -160,7 +160,7 @@ public class RegistrarActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Void> task) {
 
                                         if (task.isSuccessful()) {
-                                            // user info updated successfully
+                                            // información del usuario actualizada con éxito
                                             showMessage("Registrado completamente");
                                             updateUI();
                                         }
@@ -179,7 +179,7 @@ public class RegistrarActivity extends AppCompatActivity {
         });
     }
     private void openGallery() {
-        //TODO: open gallery intent and wait for user to pick an image !
+        //abre la intención de la galería y espera a que el usuario elija una imagen
 
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image/*");
@@ -190,6 +190,7 @@ public class RegistrarActivity extends AppCompatActivity {
 
 
         if (ContextCompat.checkSelfPermission(RegistrarActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                //permiso para poder acceder la galería
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(RegistrarActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
@@ -209,6 +210,7 @@ public class RegistrarActivity extends AppCompatActivity {
             openGallery();
 
     }
+    //referencia
     private void References() {
         Nombre = (EditText) findViewById(R.id.Nombre);
         Apellidos = (EditText) findViewById(R.id.Apellidos);
@@ -218,6 +220,7 @@ public class RegistrarActivity extends AppCompatActivity {
         IniciarSesion = (Button) findViewById(R.id.botonIniciarSesion);
         registro = (Button) findViewById(R.id.botonCrearCuenta);
     }
+    //toast que se mostrará
     private void showMessage(String message) {
 
         Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
@@ -225,7 +228,7 @@ public class RegistrarActivity extends AppCompatActivity {
     }
     private void updateUI() {
 
-        Intent mainActivity = new Intent(getApplicationContext(),MainActivity.class);
+        Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainActivity);
         finish();
 
@@ -237,8 +240,8 @@ public class RegistrarActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK && requestCode == REQUESCODE && data != null ) {
 
-            // the user has successfully picked an image
-            // we need to save its reference to a Uri variable
+            //el usuario ha elegido con éxito una imagen
+            // necesitamos guardar su referencia a una variable Uri
             pickedImgUri = data.getData() ;
             ImgUserPhoto.setImageURI(pickedImgUri);
 

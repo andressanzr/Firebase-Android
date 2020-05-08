@@ -1,4 +1,4 @@
-package com.example.firebase_proyect;
+package com.example.firebase_proyect.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.firebase_proyect.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -22,11 +23,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class Login extends AppCompatActivity {
     private Button login;
-    private Button registro;
+    private Button registro, botonreset;
     private EditText emailInicial;
     private EditText passwordInicial;
     private FirebaseAuth mAuth;
     private Intent MainActivity;
+    private Button recuperarContra;
     private ImageView loginPhoto;
     private SharedPreferences mSharedPreferences;
 
@@ -38,7 +40,7 @@ public class Login extends AppCompatActivity {
         References();
         //conexión con la base de datos en firebase
         mAuth = FirebaseAuth.getInstance();
-        MainActivity = new Intent(this,com.example.firebase_proyect.MainActivity.class);
+        MainActivity = new Intent(this, com.example.firebase_proyect.Activity.MainActivity.class);
         loginPhoto = findViewById(R.id.login_photo);
         //inicia el shared Preference
         initSharedPreferences();
@@ -47,7 +49,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent registerActivity = new Intent(getApplicationContext(),RegistrarActivity.class);
+                Intent registerActivity = new Intent(getApplicationContext(), RegistrarActivity.class);
                 startActivity(registerActivity);
                 finish();
 
@@ -81,6 +83,13 @@ public class Login extends AppCompatActivity {
 
             }
         });
+        botonreset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this,RecuperarcontraActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initSharedPreferences() {
@@ -89,10 +98,12 @@ public class Login extends AppCompatActivity {
     }
     //declaración variables
     private void References() {
+        botonreset = (Button) findViewById(R.id.RecuperarContraseña);
         login = (Button) findViewById(R.id.botonLogin);
         registro = (Button) findViewById(R.id.botonRegistro);
         emailInicial = (EditText) findViewById(R.id.MailInicial);
         passwordInicial = (EditText) findViewById(R.id.PasswordInicial);
+        recuperarContra= (Button) findViewById(R.id.botonRegistro);
 
     }
     //comprueba los datos
@@ -157,7 +168,7 @@ public class Login extends AppCompatActivity {
         super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            //user is already connected  so we need to redirect him to home page
+            //el usuario ya está conectado, por lo que debemos redirigirlo a la página de inicio
             updateUI();
 
         }
