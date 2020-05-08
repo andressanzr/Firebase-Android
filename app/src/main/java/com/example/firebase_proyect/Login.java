@@ -1,7 +1,9 @@
 package com.example.firebase_proyect;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -26,17 +28,21 @@ public class Login extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Intent MainActivity;
     private ImageView loginPhoto;
+    private SharedPreferences mSharedPreferences;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         References();
+        //conexión con la base de datos en firebase
         mAuth = FirebaseAuth.getInstance();
         MainActivity = new Intent(this,com.example.firebase_proyect.MainActivity.class);
         loginPhoto = findViewById(R.id.login_photo);
+        //inicia el shared Preference
+        initSharedPreferences();
+        //al seleccionar la foto te manda a registrar
         loginPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,6 +54,7 @@ public class Login extends AppCompatActivity {
 
             }
         });
+        //comprueba los datos introducidos para que se puedan loguearse
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +63,7 @@ public class Login extends AppCompatActivity {
                 final String password = passwordInicial.getText().toString();
 
                 if (mail.isEmpty() || password.isEmpty()) {
-                    showMessage("Please Verify All Field");
+                    showMessage("Porfavor. Verifique los campos");
 
                 }
                 else
@@ -75,6 +82,12 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+
+    private void initSharedPreferences() {
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    }
+    //declaración variables
     private void References() {
         login = (Button) findViewById(R.id.botonLogin);
         registro = (Button) findViewById(R.id.botonRegistro);
@@ -82,6 +95,7 @@ public class Login extends AppCompatActivity {
         passwordInicial = (EditText) findViewById(R.id.PasswordInicial);
 
     }
+    //comprueba los datos
     private boolean isValidData() {
         if (emailInicial.getText().toString().length() > 0 &&
                 passwordInicial.getText().toString().length() > 0
@@ -100,6 +114,8 @@ public class Login extends AppCompatActivity {
         }
         return true;
     }
+
+    //método para corroborar que el usuario se encuentre en la base de datos
     private void signIn(String mail, String password) {
 
 
@@ -110,24 +126,19 @@ public class Login extends AppCompatActivity {
 
                 if (task.isSuccessful()) {
 
-               //     loginProgress.setVisibility(View.INVISIBLE);
-                  //  btnLogin.setVisibility(View.VISIBLE);
                     updateUI();
 
                 }
                 else {
                     showMessage(task.getException().getMessage());
-                 //   btnLogin.setVisibility(View.VISIBLE);
-                //    loginProgress.setVisibility(View.INVISIBLE);
+
                 }
 
 
             }
         });
-
-
-
     }
+    //Termina el activity
     private void updateUI() {
 
         startActivity(MainActivity);
@@ -140,12 +151,11 @@ public class Login extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG).show();
     }
 
-
+    //mantiene la sesión del usuario abierta una vez registrado
     @Override
     protected void onStart() {
         super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
-
         if (user != null) {
             //user is already connected  so we need to redirect him to home page
             updateUI();

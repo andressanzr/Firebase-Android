@@ -35,7 +35,7 @@ public class RegistrarActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     static int PReqCode = 1 ;
     static int REQUESCODE = 1 ;
-    Uri pickedImgUri ;
+    private Uri pickedImgUri ;
     private ImageView ImgUserPhoto;
     private EditText Nombre, Apellidos, edad, MailInicial,PasswordInicial;
     @Override
@@ -79,7 +79,7 @@ public class RegistrarActivity extends AppCompatActivity {
                 }
 
         });
-        ImgUserPhoto = findViewById(R.id.regUserPhoto) ;
+        ImgUserPhoto = findViewById(R.id.reUser) ;
 
         ImgUserPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,17 +89,11 @@ public class RegistrarActivity extends AppCompatActivity {
 
                     checkAndRequestForPermission();
 
-
                 }
                 else
                 {
                     openGallery();
                 }
-
-
-
-
-
             }
         });
     }
@@ -119,27 +113,24 @@ public class RegistrarActivity extends AppCompatActivity {
                             //startActivity(new Intent (getApplicationContext(),MainActivity.class));
                             // after we created user account we need to update his profile picture and name
                             updateUserInfo( name ,pickedImgUri,mAuth.getCurrentUser());
-
-
-
-                        }
+ }
                         else
                         {
 
                             // account creation failed
                             showMessage("account creation failed" + task.getException().getMessage());
-                          //  regBtn.setVisibility(View.VISIBLE);
-                          //  loadingProgress.setVisibility(View.INVISIBLE);
+
 
                         }
                     }
                 });
     }
 
-    // update user photo and name
+    // actualiza la foto y el nombre del usuario
     private void updateUserInfo(final String name, Uri pickedImgUri, final FirebaseUser currentUser) {
 
-        // first we need to upload user photo to firebase storage and get url
+
+        //primero tenemos que subir la foto del usuario al almacenamiento de Firebase y obtener la URL
 
         StorageReference mStorage = FirebaseStorage.getInstance().getReference().child("users_photos");
         final StorageReference imageFilePath = mStorage.child(pickedImgUri.getLastPathSegment());
@@ -170,7 +161,7 @@ public class RegistrarActivity extends AppCompatActivity {
 
                                         if (task.isSuccessful()) {
                                             // user info updated successfully
-                                            showMessage("Register Complete");
+                                            showMessage("Registrado completamente");
                                             updateUI();
                                         }
 
@@ -237,6 +228,22 @@ public class RegistrarActivity extends AppCompatActivity {
         Intent mainActivity = new Intent(getApplicationContext(),MainActivity.class);
         startActivity(mainActivity);
         finish();
+
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == REQUESCODE && data != null ) {
+
+            // the user has successfully picked an image
+            // we need to save its reference to a Uri variable
+            pickedImgUri = data.getData() ;
+            ImgUserPhoto.setImageURI(pickedImgUri);
+
+
+        }
 
 
     }

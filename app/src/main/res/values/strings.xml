@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Firebase-Proyect</string>
+    <string name="app_name">FirebaseProyecto</string>
+    <string name="logout">Logout?</string>
+
 </resources>
