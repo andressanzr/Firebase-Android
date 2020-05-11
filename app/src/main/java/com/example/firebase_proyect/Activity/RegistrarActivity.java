@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.firebase_proyect.R;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -25,18 +27,35 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+
+import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegistrarActivity extends AppCompatActivity {
     private Button IniciarSesion;
     private Button registro;
     private FirebaseAuth mAuth;
+    private TextView Foto;
     static int PReqCode = 1 ;
     static int REQUESCODE = 1 ;
     private Uri pickedImgUri ;
-    private ImageView ImgUserPhoto;
+    CircleImageView ImgUserPhoto;
+    String myUrl="";
+    StorageTask uploadTask;
+
+    //Para guardar info en el storage de Firebase
+    StorageReference storageProfilePictureRef;
     private EditText Nombre, Apellidos, edad, MailInicial,PasswordInicial;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +75,13 @@ public class RegistrarActivity extends AppCompatActivity {
         registro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = MailInicial.getText().toString();
-                final String password = PasswordInicial.getText().toString();
-                final String name = Nombre.getText().toString();
-                final String Edad = edad.getText().toString();
-                final String apellidos = Apellidos.getText().toString();
+                String email = MailInicial.getText().toString();
+                String password = PasswordInicial.getText().toString();
+                String name = Nombre.getText().toString();
+                String age = edad.getText().toString();
+                String lastname = Apellidos.getText().toString();
 
-                if( email.isEmpty() || name.isEmpty() || password.isEmpty()  ||Edad.isEmpty() || apellidos.isEmpty() ) {
-
+                if( email.isEmpty() || name.isEmpty() || password.isEmpty()  ||age.isEmpty() || lastname.isEmpty() ) {
 
                     // si algo sale mal: todos los campos deben llenarse
                     // necesitamos mostrar un mensaje de error
@@ -75,14 +93,13 @@ public class RegistrarActivity extends AppCompatActivity {
                     // El método CreateUserAccount intentará crear el usuario si el correo electrónico es válido
                     showMessage("Te has registrado correctamente, bienvenido");
 
-                    CreateUserAccount(email,name,password);
+                    CreateUserAccount(name,lastname,age,email,password);
                 }
                 }
 
         });
-        ImgUserPhoto = findViewById(R.id.reUser) ;
 
-        ImgUserPhoto.setOnClickListener(new View.OnClickListener() {
+        Foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -93,45 +110,89 @@ public class RegistrarActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    CropImage.activity(pickedImgUri).setAspectRatio(1,1).start(RegistrarActivity.this);
+
                     openGallery();
                 }
             }
         });
     }
 
-    private void CreateUserAccount(String email, final String name, String password) {
+    private void CreateUserAccount(final String nombre, final String apellido,final String edad, final String email, final String password) {
 
 
         //este método crea una cuenta de usuario con correo electrónico y contraseña específicos
+        final DatabaseReference RootRef;
+        RootRef = FirebaseDatabase.getInstance().getReference();
 
-        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        RootRef.child("Usuarios").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //Nos aseguramos de que la contraseña tenga 6 caracteres
+                if (password.length() < 6) {
+                    Toast.makeText(RegistrarActivity.this, "Debe introducir un password de al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                } else {
+                    mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegistrarActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+
+                                // el usuario creo la cuenta correctamente
+                                showMessage("Se creo la cuenta");
+                                // after we created user account we need to update his profile picture and name
+                                updateUserInfo(nombre, apellido, edad, email, password, RootRef);
+                            } else {
+
+                                // account creation failed
+                                showMessage("account creation failed" + task.getException().getMessage());
+
+
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    // actualiza la foto y el nombre del usuario
+    private void updateUserInfo(String nombre, String apellido, String edad, String email, String password, DatabaseReference rootRef) {
+        final String ID = mAuth.getCurrentUser().getUid();
+
+        HashMap<String,Object> userdataMap=new HashMap<>();
+        userdataMap.put("ID",ID);
+        userdataMap.put("nombre",nombre);
+        userdataMap.put("apellido",apellido);
+        userdataMap.put("edad",edad);
+        userdataMap.put("email",email);
+        userdataMap.put("password",password);
+
+        rootRef.child("Usuarios").child(ID).updateChildren(userdataMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){ //En caso exitoso
+                            showMessage("Datos guardados");
+                            updateUI();
 
-                            // el usuario creo la cuenta correctamente
-                            showMessage("Se creo la cuenta");
-                            // after we created user account we need to update his profile picture and name
-                            updateUserInfo( name ,pickedImgUri,mAuth.getCurrentUser());
- }
-                        else
-                        {
-
-                            // account creation failed
-                            showMessage("account creation failed" + task.getException().getMessage());
-
-
+                        }else{ //En caso de error
+                            showMessage("Error en guardar los datos");
                         }
                     }
                 });
-    }
-
-    // actualiza la foto y el nombre del usuario
-    private void updateUserInfo(final String name, Uri pickedImgUri, final FirebaseUser currentUser) {
-
-
+        final DatabaseReference RootRef;
+        RootRef= FirebaseDatabase.getInstance().getReference();
+        try{
+            actualizaImagen(pickedImgUri,RootRef);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }/*
         //primero tenemos que subir la foto del usuario al almacenamiento de Firebase y obtener la URL
-
         StorageReference mStorage = FirebaseStorage.getInstance().getReference().child("users_photos");
         final StorageReference imageFilePath = mStorage.child(pickedImgUri.getLastPathSegment());
         imageFilePath.putFile(pickedImgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -163,6 +224,9 @@ public class RegistrarActivity extends AppCompatActivity {
                                             // información del usuario actualizada con éxito
                                             showMessage("Registrado completamente");
                                             updateUI();
+                                        }else {
+                                            // En caso de fallo, se muestra un mensaje emergente de error
+                                            Toast.makeText(RegistrarActivity.this,"EROR. Inténtelo de nuevo",Toast.LENGTH_SHORT).show();
                                         }
 
                                     }
@@ -177,10 +241,51 @@ public class RegistrarActivity extends AppCompatActivity {
 
             }
         });
+        */
+        mAuth.signOut();
+
     }
+    private void actualizaImagen(final Uri imageUri, final DatabaseReference rootRef) {
+
+        final FirebaseUser user= mAuth.getCurrentUser();
+        if(imageUri!=null){
+            //Ruta donde se guarda la foto de usuario en Firebase Storage
+            final StorageReference fileref=storageProfilePictureRef.child(user.getUid()+".jpg");
+            uploadTask=fileref.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation() {
+                @Override
+                public Object then(@NonNull Task task) throws Exception {
+                    if(!task.isSuccessful()){
+                        throw task.getException();
+                    }
+
+                    return fileref.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        Uri downloadUrl=task.getResult();
+                        myUrl=downloadUrl.toString();
+                        HashMap<String,Object> userMap= new HashMap<>();
+                        userMap.put("foto",myUrl);
+
+                        //FIJAMOS FOTO DEL PERFIL DE FIREBASE
+                        UserProfileChangeRequest profileUpdatesPhoto = new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build();
+                        user.updateProfile(profileUpdatesPhoto);
+                        //ACTUALIZAMOS LOS DATOS CUYO NODO PRINCIPAL SEA IDÉNTICO AL ID DEL USUARIO ACTUAL
+                        rootRef.child("Usuarios").child(user.getUid()).updateChildren(userMap);
+
+                    }else{
+                        Toast.makeText(RegistrarActivity.this,"Error al actualizar perfil", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
     private void openGallery() {
         //abre la intención de la galería y espera a que el usuario elija una imagen
-
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent,REQUESCODE);
@@ -212,6 +317,8 @@ public class RegistrarActivity extends AppCompatActivity {
     }
     //referencia
     private void References() {
+        Foto = (TextView) findViewById(R.id.cambiarFoto);
+        ImgUserPhoto = (CircleImageView)findViewById(R.id.reUser) ;
         Nombre = (EditText) findViewById(R.id.Nombre);
         Apellidos = (EditText) findViewById(R.id.Apellidos);
         edad = (EditText) findViewById(R.id.edad);
@@ -230,10 +337,8 @@ public class RegistrarActivity extends AppCompatActivity {
 
         Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainActivity);
-        finish();
-
-
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

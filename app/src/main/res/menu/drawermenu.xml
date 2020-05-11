@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_alumnos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@android:drawable/ic_dialog_email"
+            android:title="Alumnos" />
+        <item
+            android:id="@+id/menu_grupos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@android:drawable/ic_dialog_alert"
+            android:title="Grupos" />
+        <item
+            android:id="@+id/menu_asignaturas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="Asignaturas" />
+    </group>
+    <group
+        android:id="@+id/grupoActivity">
+        <item
+            android:id="@+id/reuniones"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="Reuniones" />
+        <item
+            android:id="@+id/configuracion"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="Configuración usuario" />
+    </group>
+    <group
+        android:id="@+id/Otrogrupo">
+
+        <item
+            android:id="@+id/cerrar_sesion"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="Cerrar sesión" />
+    </group>
+</menu>

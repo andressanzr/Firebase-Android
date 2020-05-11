@@ -12,6 +12,14 @@
         android:layout_height="match_parent"
         android:src="@drawable/fondo"
         android:scaleType="centerCrop" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#D8141414"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
@@ -55,4 +63,5 @@
         android:textColor="#fffdf9"
         android:textSize="18dp">
     </Button>
+    </LinearLayout>
 </RelativeLayout>

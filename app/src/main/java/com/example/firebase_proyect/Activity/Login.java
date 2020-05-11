@@ -1,20 +1,25 @@
 package com.example.firebase_proyect.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.firebase_proyect.R;
+import com.example.firebase_proyect.Utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -31,6 +36,7 @@ public class Login extends AppCompatActivity {
     private Button recuperarContra;
     private ImageView loginPhoto;
     private SharedPreferences mSharedPreferences;
+    private Switch recuerdame;
 
 
     @Override
@@ -40,10 +46,9 @@ public class Login extends AppCompatActivity {
         References();
         //conexión con la base de datos en firebase
         mAuth = FirebaseAuth.getInstance();
-        MainActivity = new Intent(this, com.example.firebase_proyect.Activity.MainActivity.class);
+        MainActivity = new Intent(this, com.example.firebase_proyect.Activity.ActivityGestionar.class);
         loginPhoto = findViewById(R.id.login_photo);
         //inicia el shared Preference
-        initSharedPreferences();
         //al seleccionar la foto te manda a registrar
         loginPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,16 +95,26 @@ public class Login extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //se auto-rellenan el email y contraseña en caso de haberse guardado
+        mSharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        setCredentialsIfExist();
+
+        //Si el switch está activado guarda los valores introducidos en los campos de email y password
+        recuerdame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                saveOnPreferences(emailInicial.getText().toString().trim(), passwordInicial.getText().toString().trim());
+            }
+        });
     }
 
-    private void initSharedPreferences() {
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-    }
     //declaración variables
     private void References() {
         botonreset = (Button) findViewById(R.id.RecuperarContraseña);
         login = (Button) findViewById(R.id.botonLogin);
+        recuerdame= (Switch) findViewById(R.id.remember_me_switch);
         registro = (Button) findViewById(R.id.botonRegistro);
         emailInicial = (EditText) findViewById(R.id.MailInicial);
         passwordInicial = (EditText) findViewById(R.id.PasswordInicial);
@@ -149,6 +164,17 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+    //método que guarda el email y contraseña introducidos
+    private void saveOnPreferences(String email, String password) {
+        if (recuerdame.isChecked()) {
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putString("email", email);
+            editor.putString("pass", password);
+            editor.apply();
+        } else {
+            Utils.removeSharedPreferences(mSharedPreferences);
+        }
+    }
     //Termina el activity
     private void updateUI() {
 
@@ -156,7 +182,16 @@ public class Login extends AppCompatActivity {
         finish();
 
     }
-
+    //método que fija el email y contraseña que se hayan guardado
+    private void setCredentialsIfExist() {
+        String email = Utils.getUserMailPrefs(mSharedPreferences);
+        String password = Utils.getUserPassPrefs(mSharedPreferences);
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+            emailInicial.setText(email);
+            passwordInicial.setText(password);
+            recuerdame.setChecked(true);
+        }
+    }
     private void showMessage(String text) {
 
         Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG).show();

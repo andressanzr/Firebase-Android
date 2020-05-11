@@ -12,15 +12,19 @@ import android.widget.Button;
 import com.example.firebase_proyect.Activity.Login;
 import com.example.firebase_proyect.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity  {
     private FirebaseAuth mAuth;
     private Button signout;
+    private FirebaseUser user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //instancia con firebase
         mAuth = FirebaseAuth.getInstance();
+        user=mAuth.getCurrentUser();
 
         setContentView(R.layout.activity_main);
         signout = findViewById(R.id.singout);
@@ -40,10 +44,9 @@ public class MainActivity extends AppCompatActivity  {
         alert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                mAuth.getInstance().signOut();
+                mAuth.signOut();
                 //cierra la cuenta y le envia de nuevo al login
-                Intent loginActivity = new Intent(getApplicationContext(), Login.class);
-                startActivity(loginActivity);
+                startActivity(new Intent(MainActivity.this, Login.class));
                 finish();
             }
         });
