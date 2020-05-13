@@ -33,7 +33,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/userphoto"
+            android:src="@drawable/seusuario"
             app:layout_constraintBottom_toTopOf="@+id/regName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

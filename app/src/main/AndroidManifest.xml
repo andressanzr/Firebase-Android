@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activity.ActivityGestionar"></activity>
+        <activity android:name=".Activity.ConfiguracionActivity" />
+        <activity android:name=".Activity.ReunionesActivity" />
+        <activity android:name=".Activity.NavigationActivity" />
         <activity android:name=".Activity.RecuperarcontraActivity" />
         <activity android:name=".Activity.RegistrarActivity" />
         <activity android:name=".Activity.MainActivity" />

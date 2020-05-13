@@ -2,36 +2,28 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
+
         <item
-            android:id="@+id/menu_alumnos"
+            android:id="@+id/menu_gestionar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:icon="@android:drawable/ic_dialog_email"
-            android:title="Alumnos" />
-        <item
-            android:id="@+id/menu_grupos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@android:drawable/ic_dialog_alert"
-            android:title="Grupos" />
-        <item
-            android:id="@+id/menu_asignaturas"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@android:drawable/ic_dialog_info"
-            android:title="Asignaturas" />
+            android:icon="@android:drawable/ic_menu_compass"
+            android:title="Gestionar" />
     </group>
     <group
         android:id="@+id/grupoActivity">
         <item
             android:id="@+id/reuniones"
-            android:icon="@android:drawable/ic_lock_power_off"
+            android:icon="@android:drawable/ic_menu_slideshow"
             android:title="Reuniones" />
+    </group>
+    <group>
         <item
             android:id="@+id/configuracion"
-            android:icon="@android:drawable/ic_lock_power_off"
+            android:icon="@android:drawable/ic_menu_manage"
             android:title="Configuración usuario" />
     </group>
+
     <group
         android:id="@+id/Otrogrupo">
 

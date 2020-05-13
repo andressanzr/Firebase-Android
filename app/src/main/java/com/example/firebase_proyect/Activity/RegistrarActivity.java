@@ -191,57 +191,7 @@ public class RegistrarActivity extends AppCompatActivity {
             actualizaImagen(pickedImgUri,RootRef);
         }catch (NullPointerException e){
             e.printStackTrace();
-        }/*
-        //primero tenemos que subir la foto del usuario al almacenamiento de Firebase y obtener la URL
-        StorageReference mStorage = FirebaseStorage.getInstance().getReference().child("users_photos");
-        final StorageReference imageFilePath = mStorage.child(pickedImgUri.getLastPathSegment());
-        imageFilePath.putFile(pickedImgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                // imagen cargada con éxito
-                // ahora podemos obtener nuestra url de imagen
-
-                imageFilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-
-                        // uri contain user image url
-
-
-                        UserProfileChangeRequest profleUpdate = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(name)
-                                .setPhotoUri(uri)
-                                .build();
-
-
-                        currentUser.updateProfile(profleUpdate)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        if (task.isSuccessful()) {
-                                            // información del usuario actualizada con éxito
-                                            showMessage("Registrado completamente");
-                                            updateUI();
-                                        }else {
-                                            // En caso de fallo, se muestra un mensaje emergente de error
-                                            Toast.makeText(RegistrarActivity.this,"EROR. Inténtelo de nuevo",Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-                                });
-
-                    }
-                });
-
-
-
-
-
-            }
-        });
-        */
+        }
         mAuth.signOut();
 
     }

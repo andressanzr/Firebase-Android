@@ -91,22 +91,21 @@
             android:textColor="#fffdf9"
             android:textSize="18dp">
         </Button>
-        <Button
+        <TextView
             android:id="@+id/RecuperarContraseña"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="end"
             android:layout_marginLeft="28dp"
             android:layout_marginRight="28dp"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/boton_redondo"
-            android:text="¿Olvidaste tu contraseña?"
+            android:layout_marginBottom="10dp"
             android:ems="10"
-            android:textColor="#fffdf9"
             android:hint="¿Olvidaste tu contraseña?"
             android:textSize="16dp"
+            android:paddingBottom="10dp"
             android:textColorHint="#ccc">
-        </Button>
+        </TextView>
+
 
         <Switch
             android:id="@+id/remember_me_switch"
@@ -114,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:fontFamily="sans-serif-light"
-            android:layout_marginRight="110dp"
+            android:layout_marginRight="100dp"
             android:text="Recuerdame"
             android:textAllCaps="false"
             android:textColor="@color/white"
