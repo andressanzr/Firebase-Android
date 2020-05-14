@@ -7,9 +7,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.firebase_proyect.Fragment.Alumnos;
 import com.example.firebase_proyect.Fragment.Asignaturas;
 import com.example.firebase_proyect.Fragment.Grupos;
+import com.example.firebase_proyect.Models.Users;
 import com.google.android.material.navigation.NavigationView;
 
 import android.app.Activity;
@@ -25,6 +27,12 @@ import android.widget.TextView;
 import com.example.firebase_proyect.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -51,7 +59,7 @@ public class NavigationActivity extends AppCompatActivity {
         navigationView = (NavigationView) findViewById(R.id.navview);
 
 
-        updateNavHeader();
+        updateNavHeader(user);
 
         setFragmentByDefault();
         getSupportActionBar().setTitle("Gestionar");
@@ -118,15 +126,70 @@ public class NavigationActivity extends AppCompatActivity {
 
     }
 
-    public void updateNavHeader() {
+    public void updateNavHeader(final FirebaseUser user) {
+        final DatabaseReference RootRef;
+        RootRef = FirebaseDatabase.getInstance().getReference();
+        RootRef.child("Usuarios").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navview);
-        View headerView = navigationView.getHeaderView(0);
-        TextView navUsername = headerView.findViewById(R.id.nav_username);
-        TextView navUserMail = headerView.findViewById(R.id.nav_gmail);
-        ImageView navUserPhot = headerView.findViewById(R.id.nav_user_photo);
+                for (final DataSnapshot snapShot : dataSnapshot.getChildren()) {
+                    //Accedemos a la base de datos en la ruta indicada
+                    RootRef.child("Usuarios").child(snapShot.getKey()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            //Para extraer los datos de la BBDD con ayuda de la clase Usuarios
+                            Users datosUsuario = snapShot.getValue(Users.class);
+                            NavigationView navigationView = (NavigationView) findViewById(R.id.navview);
+                            View headerView = navigationView.getHeaderView(0);
+                            TextView navUsername = headerView.findViewById(R.id.nav_username);
+                            TextView navUserLastname = headerView.findViewById(R.id.nav_lastname);
+                            ImageView navUserPhot = headerView.findViewById(R.id.nav_user_photo);
+                            //Se obtiene la ID del usuario actual
+                            String id = user.getUid();
+                            //Se obtienen los string que representan las IDs en la BBDD
+                            String idBBDD = datosUsuario.getID();
+                            //Si el ID del usuario actual se corresponde con alguna de las guardadas,
+                            //se obtienen los datos
+                            if (idBBDD.equals(id)) {
 
-       // navUserMail.setText(Users.getEmail());
+                                String fotoBBDD = null;
+                                //Se obtiene el url de ubicación de la foto en caso de estar guardado
+                                if(snapShot.child("foto").exists()){
+                                    fotoBBDD=datosUsuario.getFoto();
+                                }
+                                //Se obtienen nombre y apellidos
+                                String nombreBBDD = datosUsuario.getNombre();
+                                String apellidosBBDD = datosUsuario.getApellido();
+
+                                //Se introducen los datos obtenidos en los elementos de la vista
+                                if(fotoBBDD!=null){
+                                    //Glide.with(context).load(fotoBBDD).into(navUserPhot);
+                                    Picasso.get().load(fotoBBDD).into(navUserPhot);
+                                }
+                                navUserLastname.setText(apellidosBBDD);
+                                navUsername.setText(nombreBBDD);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+       // navUserMail.setText(user.getEmail());
         //navUsername.setText(Users.getNombre());
 
         // now we will use Glide to load user image
