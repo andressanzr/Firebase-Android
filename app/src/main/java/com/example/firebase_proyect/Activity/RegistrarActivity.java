@@ -276,6 +276,7 @@ public class RegistrarActivity extends AppCompatActivity {
         PasswordInicial = (EditText) findViewById(R.id.PasswordInicial);
         IniciarSesion = (Button) findViewById(R.id.botonIniciarSesion);
         registro = (Button) findViewById(R.id.botonCrearCuenta);
+        storageProfilePictureRef= FirebaseStorage.getInstance().getReference().child("Fotos de perfil");
     }
     //toast que se mostrará
     private void showMessage(String message) {
@@ -285,7 +286,7 @@ public class RegistrarActivity extends AppCompatActivity {
     }
     private void updateUI() {
 
-        Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
+        Intent mainActivity = new Intent(getApplicationContext(), Login.class);
         startActivity(mainActivity);
     }
 

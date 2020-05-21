@@ -26,6 +26,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class Login extends AppCompatActivity {
     private Button login;
     private TextView botonreset;
@@ -34,7 +36,6 @@ public class Login extends AppCompatActivity {
     private EditText passwordInicial;
     private FirebaseAuth mAuth;
     private Intent MainActivity;
-    private Button recuperarContra;
     private ImageView loginPhoto;
     private SharedPreferences mSharedPreferences;
     private Switch recuerdame;
@@ -48,7 +49,6 @@ public class Login extends AppCompatActivity {
         //conexión con la base de datos en firebase
         mAuth = FirebaseAuth.getInstance();
         MainActivity = new Intent(this, NavigationActivity.class);
-        loginPhoto = findViewById(R.id.login_photo);
         //inicia el shared Preference
         //al seleccionar la foto te manda a registrar
         loginPhoto.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +120,8 @@ public class Login extends AppCompatActivity {
         registro = (Button) findViewById(R.id.botonRegistro);
         emailInicial = (EditText) findViewById(R.id.MailInicial);
         passwordInicial = (EditText) findViewById(R.id.PasswordInicial);
-        recuperarContra= (Button) findViewById(R.id.botonRegistro);
+        loginPhoto = (ImageView) findViewById(R.id.login_photo);
+
 
     }
     //comprueba los datos
@@ -186,10 +187,8 @@ public class Login extends AppCompatActivity {
     }
     //Termina el activity
     private void updateUI() {
-
         startActivity(MainActivity);
         finish();
-
     }
 
     private void showMessage(String text) {

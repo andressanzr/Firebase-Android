@@ -7,10 +7,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
-import com.example.firebase_proyect.Fragment.Alumnos;
-import com.example.firebase_proyect.Fragment.Asignaturas;
-import com.example.firebase_proyect.Fragment.Grupos;
+import com.example.firebase_proyect.Fragment.AlumnosFragment;
 import com.example.firebase_proyect.Models.Users;
 import com.google.android.material.navigation.NavigationView;
 
@@ -209,7 +206,7 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void setFragmentByDefault() {
-        changeFragment(new Alumnos(), navigationView.getMenu().getItem(0));
+        changeFragment(new AlumnosFragment(), navigationView.getMenu().getItem(0));
     }
     private void signOut() {
         mAuth = FirebaseAuth.getInstance();

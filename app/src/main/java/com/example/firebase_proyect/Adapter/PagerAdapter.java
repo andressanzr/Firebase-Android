@@ -5,9 +5,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.firebase_proyect.Fragment.Alumnos;
-import com.example.firebase_proyect.Fragment.Asignaturas;
-import com.example.firebase_proyect.Fragment.Grupos;
+import com.example.firebase_proyect.Fragment.AlumnosFragment;
+import com.example.firebase_proyect.Fragment.AsignaturasFragment;
+import com.example.firebase_proyect.Fragment.GruposFragment;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
 
@@ -25,11 +25,11 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                return new Alumnos();
+                return new AlumnosFragment();
             case 1:
-                return new Asignaturas();
+                return new AsignaturasFragment();
             case 2:
-                return new Grupos();
+                return new GruposFragment();
             default:
                 return null;
         }
