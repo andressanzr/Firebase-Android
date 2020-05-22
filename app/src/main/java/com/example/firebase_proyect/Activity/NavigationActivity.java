@@ -14,6 +14,7 @@ import com.google.android.material.navigation.NavigationView;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,20 +30,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.squareup.picasso.Picasso;
 
 public class NavigationActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    //private RecyclerView recycler;
-  //  private FloatingActionButton fab;
     boolean isDark = false;
-    EditText searchInput ;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-
-    //private RecyclerView.LayoutManager Manager;
 
 
     @Override

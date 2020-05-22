@@ -35,19 +35,16 @@ public class ActivityGestionar extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Toast.makeText(ActivityGestionar.this, "Seleccionado -> "+tab.getText(), Toast.LENGTH_SHORT).show();
                 int position = tab.getPosition();
                 viewPager.setCurrentItem(position);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                Toast.makeText(ActivityGestionar.this, "Deseleccionado -> "+tab.getText(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Toast.makeText(ActivityGestionar.this, "Reseleccioando -> "+tab.getText(), Toast.LENGTH_SHORT).show();
             }
         });
 

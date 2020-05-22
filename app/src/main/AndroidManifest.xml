@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.AgregarAsignatura"></activity>
+        <activity android:name=".Activity.AgregarGrupos"></activity>
+        <activity android:name=".Activity.AgregarAsignatura" />
         <activity android:name=".Activity.ActivityGestionar" />
         <activity android:name=".Activity.ConfiguracionActivity" />
         <activity android:name=".Activity.ReunionesActivity" />

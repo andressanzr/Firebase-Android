@@ -35,20 +35,18 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 public class AgregarAsignatura extends AppCompatActivity {
-    private EditText inputSubjectName, inputSubjectCourse, inputSubjectDescription;
 
     private String ID;
-    private ImageView input_fotoAsignatura;
+    private ImageView fotoAsignatura;
     private static final int GalleryPick = 1;
-    private Uri ImagenUri;
-    String IDexistente="";
     String myUrl="";
     StorageTask uploadTask;
-
     private StorageReference SubjectsImagesRef;
     private DatabaseReference SubjectsRef;
-
-    private Button createSubject;
+    private EditText nombreAsig, nombreCurs, description;
+    private Button guardar;
+    private Uri ImagenUri;
+    String IDexistente="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,15 +62,11 @@ public class AgregarAsignatura extends AppCompatActivity {
 
         SubjectsRef= FirebaseDatabase.getInstance().getReference().child("Asignaturas");
         SubjectsImagesRef= FirebaseStorage.getInstance().getReference().child("Imagenes asignaturas");
-
-        input_fotoAsignatura= (ImageView) findViewById(R.id.imageCurso);
-        inputSubjectName= (EditText)findViewById(R.id.nombrePersona);
-        inputSubjectCourse= (EditText)findViewById(R.id.txtCurso);
-        inputSubjectDescription= (EditText)findViewById(R.id.txtDescripcion);
-        createSubject=(Button) findViewById(R.id.guardarDatos);
+        References();
 
 
-        input_fotoAsignatura.setOnClickListener(new View.OnClickListener() {
+
+        fotoAsignatura.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 abrirGaleria();
@@ -80,13 +74,12 @@ public class AgregarAsignatura extends AppCompatActivity {
         });
 
 
-        createSubject.setOnClickListener(new View.OnClickListener() {
+        guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String subjectName= inputSubjectName.getText().toString().trim();
-                String subjectCourse= inputSubjectCourse.getText().toString().trim();
-                String subjectDescription= inputSubjectDescription.getText().toString().trim();
+                String subjectName= nombreAsig.getText().toString().trim();
+                String subjectCourse= nombreCurs.getText().toString().trim();
+                String subjectDescription= description.getText().toString().trim();
 
                 if(TextUtils.isEmpty(subjectName)){
                     Toast.makeText(AgregarAsignatura.this,"Se requiere un nombre para la asignatura",Toast.LENGTH_SHORT).show();
@@ -118,29 +111,25 @@ public class AgregarAsignatura extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             Asignaturas datosAsignatura = snapShot.getValue(Asignaturas.class);
                             String id = IDexistente;
-                            String idBBDD = datosAsignatura.getID();
-                            if (idBBDD.equals(id)) {
+                            String idBd = datosAsignatura.getID();
+                            if (idBd.equals(id)) {
 
-                                String fotoBBDD = null;
-
-
+                                String fotoBd = null;
                                 if(snapShot.child("foto").exists()){
-                                    fotoBBDD=datosAsignatura.getFoto();
+                                    fotoBd=datosAsignatura.getFoto();
+                                }
+                                //declaración para que devuelva los balores
+                                String name = datosAsignatura.getNombre();
+                                String course = datosAsignatura.getCurso();
+                                String descripcion = datosAsignatura.getDescripcion();
+                                //si la foto no es null muestra la foto ingresada
+                                if(fotoBd!=null){
+                                    Picasso.get().load(fotoBd).resize(250,250).into(fotoAsignatura);
                                 }
 
-
-                                String nameBBDD = datosAsignatura.getNombre();
-                                String courseBBDD = datosAsignatura.getCurso();
-                                String descriptionBBDD = datosAsignatura.getDescripcion();
-
-
-                                if(fotoBBDD!=null){
-                                    Picasso.get().load(fotoBBDD).resize(250,250).into(input_fotoAsignatura);
-                                }
-
-                                inputSubjectName.setText(nameBBDD);
-                                inputSubjectCourse.setText(courseBBDD);
-                                inputSubjectDescription.setText(descriptionBBDD);
+                                nombreAsig.setText(name);
+                                nombreCurs.setText(course);
+                                description.setText(descripcion);
 
                             }
                         }
@@ -171,7 +160,7 @@ public class AgregarAsignatura extends AppCompatActivity {
     private void addPhoto(final Uri imageUri, final DatabaseReference rootRef, final String ID) {
 
         if(imageUri!=null){
-            //Ruta donde se guarda la foto de asignatura en Firebase Storage
+            //Busca mediante la Uri en el FireStore
             final StorageReference fileref=SubjectsImagesRef.child(ID +".jpg");
             uploadTask=fileref.putFile(imageUri);
             uploadTask.continueWithTask(new Continuation() {
@@ -206,27 +195,13 @@ public class AgregarAsignatura extends AppCompatActivity {
 
     private void saveInfoSubjectinBBDD(String subjectName, String subjectCourse, String subjectDescription) {
 
-        //OBTENEMOS LA FECHA ACTUAL
-        /*Calendar calendar= Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM,yyyy");
-        fechaActual=currentDate.format(calendar.getTime());
-
-        //OBTENEMOS LA HORA ACTUAL
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
-        horaActual=currentTime.format(calendar.getTime());*/
-
-        //CREAMOS UNA CLAVE CON LA FECHA Y HORA OBTENIDA QUE SERVIRÁ PARA CREAR LA ID DEL PRODUCTO
-
-
-
 
         if(IDexistente!=null){
             ID=IDexistente;
         }else{
             ID = SubjectsRef.push().getKey();
         }
-
-
+        //Guarda todos los datos ingresados con las siguientes características
         HashMap<String,Object> subjectMap= new HashMap<>();
         subjectMap.put("ID",ID);
         subjectMap.put("nombre",subjectName);
@@ -254,23 +229,30 @@ public class AgregarAsignatura extends AppCompatActivity {
                     }
                 });
     }
-
+//se muestra la galería
     private void abrirGaleria(){
         Intent galeriaIntent= new Intent();
         galeriaIntent.setAction(Intent.ACTION_GET_CONTENT);
         galeriaIntent.setType("image/*");
         startActivityForResult(galeriaIntent,GalleryPick);
     }
-    //SE OBTIENE LA RUTA DE LA FOTO SELECCIONADA, NECESARIA PARA SUBIRLA A LA BBDD
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode==GalleryPick&&resultCode==RESULT_OK&&data!=null){
             ImagenUri=data.getData();
-            Picasso.get().load(ImagenUri).resize(250,250).into(input_fotoAsignatura);
+            Picasso.get().load(ImagenUri).resize(250,250).into(fotoAsignatura);
 
-            //input_fotoAsignatura.setImageURI(ImagenUri);
         }
+    }
+    //referencia los datos
+    private void References() {
+        fotoAsignatura= (ImageView) findViewById(R.id.imageCurso);
+        nombreAsig= (EditText)findViewById(R.id.textNombreAsig);
+        nombreCurs= (EditText)findViewById(R.id.txtCurso);
+        description= (EditText)findViewById(R.id.txtDescripcion);
+        guardar=(Button) findViewById(R.id.guardarDatos);
     }
 
 }

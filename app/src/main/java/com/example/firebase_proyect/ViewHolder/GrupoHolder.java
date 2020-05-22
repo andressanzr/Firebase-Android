@@ -15,8 +15,8 @@ public class GrupoHolder extends RecyclerView.ViewHolder implements View.OnClick
     public ItemClickListener listener;
     public GrupoHolder(@NonNull View itemView) {
         super(itemView);
-        numero=(TextView) itemView.findViewById(R.id.group_number_item);
-        nombregrupo=(TextView) itemView.findViewById(R.id.group_name_item);
+        numero=(TextView) itemView.findViewById(R.id.numeroGrupo);
+        nombregrupo=(TextView) itemView.findViewById(R.id.nombreGrupo);
 
     }
     public void setItemClickListener(ItemClickListener listener){this.listener = listener;}

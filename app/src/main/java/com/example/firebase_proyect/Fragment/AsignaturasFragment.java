@@ -57,7 +57,7 @@ public class AsignaturasFragment extends Fragment  {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
-
+        //menu donde contiene el buscador
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
@@ -70,7 +70,6 @@ public class AsignaturasFragment extends Fragment  {
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    //Log.i("onQueryTextChange", newText);
 
                     asignatura=searchView.getQuery().toString();
                     onStart();
@@ -121,7 +120,6 @@ public class AsignaturasFragment extends Fragment  {
             @Override
             protected void onBindViewHolder(@NonNull AsignaturaHolder holder, final int position, @NonNull final Asignaturas model) {
 
-                //INFLAMOS LOS ELEMENTOS DE LA LISTA
                 holder.NombreAlumno.setText(model.getNombre());
                 holder.Curso.setText(model.getCurso());
 
@@ -134,7 +132,7 @@ public class AsignaturasFragment extends Fragment  {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                //Muestra las dos opciones que tiene de modificar y eliminar
                         final CharSequence opciones[]= new CharSequence[]{
                                 "Modificar",
                                 "Eliminar"
@@ -145,25 +143,21 @@ public class AsignaturasFragment extends Fragment  {
                         builder.setItems(opciones, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
-                                //CON MODIFICAR SE CARGA EL ACTIVITY DEL PRODUCTO DONDE SE MODIFICA
-                                //LA CANTIDAD DEL PRODUCTO
+
                                 if(i==0){
                                     asignatura="";
                                     Intent intent= new Intent(getContext(), AgregarAsignatura.class);
                                     intent.putExtra("IDsubject", model.getID());
                                     startActivity(intent);
                                 }
-                                //CON ELIMINAR, SE ACCEDE A LA UBICACIÓN DE LA LISTA DE LA COMPRA,
-                                //Y AHÍ SE ELIMINA EL ARTÍCULO, ACTUALIZANDO EL FRAGMENT ACTUAL PARA
-                                //ACTUALIZAR LA LISTA Y EL PRECIO
+
                                 if(i==1){
 
                                     androidx.appcompat.app.AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
-                                    builder1.setTitle("Alertas");
-                                    builder1.setMessage("¿Seguro que quieres eliminar la asignatura de la lista?");
+                                    builder1.setTitle("Eliminar asignatura");
+                                    builder1.setMessage("¿Estas seguro que quieres eliminar la asignatura de la lista?");
                                     LayoutInflater inflater = getActivity().getLayoutInflater();
 
-                                    // Botones de aceptar/cancelar
                                     builder1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -196,8 +190,6 @@ public class AsignaturasFragment extends Fragment  {
                     }
                 });
             }
-
-            //ESTE MÉTODO INDICA LA VISTA UTILIZADA PARA MOSTRAR EL PRODUCTO EN LA LISTA
             @NonNull
             @Override
             public AsignaturaHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -218,8 +210,7 @@ public class AsignaturasFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
+        // Se infla el layout en este fragment
 
         View view=inflater.inflate(R.layout.fragment_asignaturas, container, false);
 

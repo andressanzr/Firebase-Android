@@ -3,30 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:gravity="center"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:ignore="MissingConstraints"
-    tools:context=".Activity.AgregarAsignatura">
+    tools:context=".Activity.AgregarGrupos">
 
-
-
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imageCurso"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
-        android:src="@drawable/seusuario"
-        app:layout_constraintBottom_toTopOf="@+id/regName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginBottom="10dp"
+        android:text="Número"
+        android:textColor="#070707"
+        android:textSize="20dp" />
+    <EditText
+        android:id="@+id/textnumero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:inputType="phone"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="28dp"
+        android:textColor="#070707"
+        android:textSize="20dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,43 +38,7 @@
         android:textColor="#070707"
         android:textSize="20dp" />
     <EditText
-        android:id="@+id/textNombreAsig"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="28dp"
-        android:layout_marginRight="28dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:textColor="#070707"
-        android:textSize="20dp" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="28dp"
-        android:layout_marginRight="28dp"
-        android:layout_marginBottom="10dp"
-        android:text="Curso"
-        android:textColor="#070707"
-        android:textSize="20dp" />
-    <EditText
-        android:id="@+id/txtCurso"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="28dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="28dp"
-        android:textColor="#070707"
-        android:textSize="20dp" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="28dp"
-        android:layout_marginRight="28dp"
-        android:layout_marginBottom="10dp"
-        android:text="Descripción"
-        android:textColor="#070707"
-        android:textSize="20dp" />
-    <EditText
-        android:id="@+id/txtDescripcion"
+        android:id="@+id/textnombreGrupo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"

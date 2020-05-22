@@ -31,6 +31,7 @@
         android:layout_width="154dp"
         android:layout_height="33dp"
         android:layout_gravity="bottom"
+        android:textSize="18dp"
         android:layout_marginLeft="190dp"
         android:layout_marginBottom="120dp" />
 
@@ -39,6 +40,7 @@
         android:layout_width="158dp"
         android:layout_height="31dp"
         android:layout_gravity="bottom"
+        android:textSize="18dp"
         android:layout_marginLeft="190dp"
         android:layout_marginBottom="65dp" />
 

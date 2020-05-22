@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Fragment.GruposFragment">
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddBoard"
+        android:id="@+id/gruposagregar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -15,13 +15,12 @@
         app:backgroundTint="#3700B3" />
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/TextoCorreo"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_groups"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Grupos"
-        android:textSize="36dp" />
+        android:scrollbars="vertical"/>
+
 
 
 
