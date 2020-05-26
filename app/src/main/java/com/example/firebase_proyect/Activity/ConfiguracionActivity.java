@@ -456,7 +456,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                                 //Se obtienen nombre y apellidos
                                 String nombreBBDD = datosUsuario.getNombre();
                                 String apellidosBBDD = datosUsuario.getApellido();
-                                String edadBBDD= datosUsuario.getEdad();
+                                int edadBBDD = datosUsuario.getEdad();
                                 String emailBBDD= datosUsuario.getEmail();
                                 String passwordBBDD=datosUsuario.getPassword();
 
@@ -471,7 +471,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                                 //Rellenamos los campos con los datos actuales
                                 nombrepersona.setText(nombreBBDD);
                                 apellidopersona.setText(apellidosBBDD);
-                                edadpersona.setText(edadBBDD);
+                                edadpersona.setText(edadBBDD + "");
                                 correopersona.setText(emailBBDD);
                                 nuevacontra.setText(passwordBBDD);
 

@@ -147,19 +147,23 @@ public class NavigationActivity extends AppCompatActivity {
                             //Si el ID del usuario actual se corresponde con alguna de las guardadas,
                             //se obtienen los datos
                             if (idBBDD.equals(id)) {
-
                                 String fotoBBDD = null;
+                                /*
                                 //Se obtiene el url de ubicación de la foto en caso de estar guardado
                                 if(snapShot.child("foto").exists()){
                                     fotoBBDD=datosUsuario.getFoto();
                                 }
+
+                                 */
                                 //Se obtienen nombre y apellidos
                                 String nombreBBDD = datosUsuario.getNombre();
                                 String apellidosBBDD = datosUsuario.getApellido();
 
+                                fotoBBDD = datosUsuario.getFoto();
                                 //Se introducen los datos obtenidos en los elementos de la vista
                                 if(fotoBBDD!=null){
                                     //Glide.with(context).load(fotoBBDD).into(navUserPhot);
+                                    // TODO ARREGLAR CARGAR FOTO DE FIREBASE
                                     Picasso.get().load(fotoBBDD).into(navUserPhot);
                                 }
                                 navUserLastname.setText(apellidosBBDD);
