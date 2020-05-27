@@ -22,7 +22,7 @@ public class ActivityGestionar extends AppCompatActivity {
         getSupportActionBar().setTitle("Gestionar");
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Alumnos"));
+        tabLayout.addTab(tabLayout.newTab().setText("Usuarios"));
         tabLayout.addTab(tabLayout.newTab().setText("Asignaturas"));
         tabLayout.addTab(tabLayout.newTab().setText("Grupos"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);

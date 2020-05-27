@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.AlumnosFragment">
+    tools:context=".Fragment.UsersFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
+        android:id="@+id/recycler_alumnos"
         android:layout_width="match_parent"
         android:layout_height="736dp"></androidx.recyclerview.widget.RecyclerView>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,11 +19,4 @@
         android:src="@mipmap/ic_add_fab"
         app:backgroundTint="#3700B3" />
 
-    <TextView
-        android:id="@+id/TextAlerts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="alumnos"
-        android:textSize="36dp" />
 </FrameLayout>

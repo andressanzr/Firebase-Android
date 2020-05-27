@@ -25,9 +25,8 @@
         app:civ_border_color="#ffff"
         app:civ_border_width="2dp" />
 
-
     <TextView
-        android:id="@+id/nombreAlumno"
+        android:id="@+id/nombreApellidoAlumno"
         android:layout_width="154dp"
         android:layout_height="33dp"
         android:layout_gravity="bottom"
@@ -36,16 +35,11 @@
         android:layout_marginBottom="120dp" />
 
     <TextView
-        android:id="@+id/curso"
+        android:id="@+id/tipoAlumno"
         android:layout_width="158dp"
         android:layout_height="31dp"
         android:layout_gravity="bottom"
         android:textSize="18dp"
         android:layout_marginLeft="190dp"
         android:layout_marginBottom="65dp" />
-
-
-
-
-
 </androidx.cardview.widget.CardView>

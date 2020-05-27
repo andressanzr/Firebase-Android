@@ -83,16 +83,13 @@ public class RegistrarActivity extends AppCompatActivity {
                 String lastname = Apellidos.getText().toString();
 
                 if (email.isEmpty() || name.isEmpty() || password.isEmpty() || age <= 0 || lastname.isEmpty()) {
-
                     // si algo sale mal: todos los campos deben llenarse
                     // necesitamos mostrar un mensaje de error
                     showMessage("Por favor. Verifica tus datos");
-
                 } else {
                     //todo está bien y todos los campos están llenos ahora podemos comenzar a crear una cuenta de usuario
                     // El método CreateUserAccount intentará crear el usuario si el correo electrónico es válido
                     // showMessage("Te has registrado correctamente, bienvenido");
-
                     CreateUserAccount(name, lastname, age, email, password);
                 }
             }
@@ -102,14 +99,10 @@ public class RegistrarActivity extends AppCompatActivity {
         Foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (Build.VERSION.SDK_INT >= 22) {
-
                     checkAndRequestForPermission();
-
                 } else {
                     CropImage.activity(pickedImgUri).setAspectRatio(1, 1).start(RegistrarActivity.this);
-
                     openGallery();
                 }
             }

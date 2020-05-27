@@ -47,7 +47,6 @@ public class AsignaturasFragment extends Fragment  {
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,16 +142,13 @@ public class AsignaturasFragment extends Fragment  {
                         builder.setItems(opciones, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
-
                                 if(i==0){
                                     asignatura="";
                                     Intent intent= new Intent(getContext(), AgregarAsignatura.class);
                                     intent.putExtra("IDsubject", model.getID());
                                     startActivity(intent);
                                 }
-
                                 if(i==1){
-
                                     androidx.appcompat.app.AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
                                     builder1.setTitle("Eliminar asignatura");
                                     builder1.setMessage("¿Estas seguro que quieres eliminar la asignatura de la lista?");
@@ -193,7 +189,7 @@ public class AsignaturasFragment extends Fragment  {
             @NonNull
             @Override
             public AsignaturaHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item_asignatura, parent, false);
                 AsignaturaHolder holder= new AsignaturaHolder(view);
                 return holder;
             }

@@ -1,15 +1,7 @@
 package com.example.firebase_proyect.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,14 +19,13 @@ import com.example.firebase_proyect.Models.Users;
 import com.example.firebase_proyect.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,11 +39,17 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.HashMap;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ConfiguracionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DialogInterface.OnClickListener, View.OnClickListener{
+public class ConfiguracionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DialogInterface.OnClickListener, View.OnClickListener {
     private Button guardar;
-    private EditText nombrepersona, apellidopersona, edadpersona, correopersona,nuevacontra;
+    private EditText nombrepersona, apellidopersona, edadpersona, correopersona, nuevacontra;
     private CircleImageView imagenperfil;
     private FirebaseAuth mAuth;
     private TextView userName;
@@ -85,30 +81,27 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
         getSupportActionBar().setTitle("Configuración Usuario");
         References();
         mAuth = FirebaseAuth.getInstance();
-        user=mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
 
-
-        drawerLayout= findViewById(R.id.drawer_perfil);
-        navigationView=findViewById(R.id.nav_view_perfil);
+        drawerLayout = findViewById(R.id.drawer_perfil);
+        navigationView = findViewById(R.id.nav_view_perfil);
         navigationView.setNavigationItemSelectedListener(this);
 
         //Funcionamiento del icono hamburguesa
-        actionBarDrawerToggle= new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open,R.string.close);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
         actionBarDrawerToggle.syncState();
 
 
         userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username);
-        profileImage=(CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_user_photo);
+        profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_user_photo);
 
-        ID= user.getUid();
-
+        ID = user.getUid();
 
 
         mAuth = FirebaseAuth.getInstance();
-        storageProfilePictureRef= FirebaseStorage.getInstance().getReference().child("Fotos de perfil");
-
+        storageProfilePictureRef = FirebaseStorage.getInstance().getReference().child("Fotos de perfil");
 
 
         guardar.setOnClickListener(this);
@@ -117,7 +110,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
         imagenperfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity(imageUri).setAspectRatio(1,1)
+                CropImage.activity(imageUri).setAspectRatio(1, 1)
                         .start(ConfiguracionActivity.this);
             }
         });
@@ -129,15 +122,14 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-            CropImage.ActivityResult result= CropImage.getActivityResult(data);
-            if(resultCode == Activity.RESULT_OK){
-                imageUri=result.getUri();
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == Activity.RESULT_OK) {
+                imageUri = result.getUri();
                 imagenperfil.setImageURI(imageUri);
             }
-        }
-        else{
-            Toast.makeText(this,"Error, inténtelo de nuevo", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Error, inténtelo de nuevo", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -167,8 +159,8 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
             originalPassword = editTextPassword.getText().toString();
             if (!originalPassword.isEmpty()) {
                 userInfoSaved();
-            }else{
-                Toast.makeText(ConfiguracionActivity.this,"Contraseña ACTUAL requerida para guardar cambios",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(ConfiguracionActivity.this, "Contraseña ACTUAL requerida para guardar cambios", Toast.LENGTH_SHORT).show();
             }
         } else if (which == DialogInterface.BUTTON_NEGATIVE) {
             dialogInterface.cancel();
@@ -186,68 +178,54 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
     }
 
     private void userInfoSaved() {
+        String nombre = nombrepersona.getText().toString().trim();
+        String apellido = apellidopersona.getText().toString().trim();
+        int edad = Integer.parseInt(edadpersona.getText().toString());
+        String email = correopersona.getText().toString().trim();
+        String password = nuevacontra.getText().toString().trim();
 
-        String nombre=nombrepersona.getText().toString().trim();
-        String apellido=apellidopersona.getText().toString().trim();
-        String edad=edadpersona.getText().toString().trim();
-        String email=correopersona.getText().toString().trim();
-        String password=nuevacontra.getText().toString().trim();
-
-
-        if(TextUtils.isEmpty(nombre)||TextUtils.isEmpty(apellido)||TextUtils.isEmpty(edad)||
-                TextUtils.isEmpty(email)||TextUtils.isEmpty(password)){
-            Toast.makeText(ConfiguracionActivity.this,"Error, rellene los campos vacíos", Toast.LENGTH_SHORT).show();
-        } else{
-            uploadImage(nombre,apellido,edad,email,password);
+        if (TextUtils.isEmpty(nombre) || TextUtils.isEmpty(apellido) || edad < 0 ||
+                TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(ConfiguracionActivity.this, "Error, rellene los campos vacíos", Toast.LENGTH_SHORT).show();
+        } else {
+            uploadImage(nombre, apellido, edad, email, password);
         }
     }
 
 
-    private void uploadImage(final String nombre, final String apellido,final String edad, final String email, final String password){
-
+    private void uploadImage(final String nombre, final String apellido, final int edad, final String email, final String password) {
         final DatabaseReference RootRef;
-        RootRef= FirebaseDatabase.getInstance().getReference();
-        RootRef.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener(){
+        RootRef = FirebaseDatabase.getInstance().getReference();
+        RootRef.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 for (final DataSnapshot snapShot : dataSnapshot.getChildren()) {
-
                     Users datosUsuario = snapShot.getValue(Users.class);
-
                     String emailBBDD = datosUsuario.getEmail();
                     String idBBDD = datosUsuario.getID();
 
-                    if(!ID.equals(idBBDD)){
+                    if (!ID.equals(idBBDD)) {
 
                         if (email.equals(emailBBDD)) {
                             emailRep++;
                         }
                     }
                 }
-
-
                 boolean emailValido;
                 boolean passValido;
-
-
-
-                if(emailRep==0){
-                    emailValido=true;
-                }else{
-                    emailValido=false;
-                    Toast.makeText(ConfiguracionActivity.this,"email no disponible", Toast.LENGTH_SHORT).show();
-
+                if (emailRep == 0) {
+                    emailValido = true;
+                } else {
+                    emailValido = false;
+                    Toast.makeText(ConfiguracionActivity.this, "email no disponible", Toast.LENGTH_SHORT).show();
                 }
-                if(password.length()<6){
-                    passValido=false;
-                    Toast.makeText(ConfiguracionActivity.this,"Debe introducir un password de al menos 6 caracteres",Toast.LENGTH_SHORT).show();
-                }else{
-                    passValido=true;
+                if (password.length() < 6) {
+                    passValido = false;
+                    Toast.makeText(ConfiguracionActivity.this, "Debe introducir un password de al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                } else {
+                    passValido = true;
                 }
-
-
-                if(emailValido&&passValido){
+                if (emailValido && passValido) {
 
                     AuthCredential credential = EmailAuthProvider
                             .getCredential(user.getEmail(), originalPassword); // Current Login Credentials \\
@@ -256,26 +234,20 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-
+                                    if (task.isSuccessful()) {
                                         guardaEmail(email, RootRef);
                                         guardaPassword(password, RootRef);
-                                        actualizaPerfil(nombre,apellido,edad,RootRef);
-                                        actualizaImagen(imageUri,RootRef);
-
+                                        actualizaPerfil(nombre, apellido, edad, RootRef);
+                                        actualizaImagen(imageUri, RootRef);
                                         mAuth.signOut();
-                                        Toast.makeText(ConfiguracionActivity.this,"Perfil actualizado", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ConfiguracionActivity.this, "Perfil actualizado", Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(ConfiguracionActivity.this, Login.class));
-
                                     } else {
-                                        Toast.makeText(ConfiguracionActivity.this,"Verifique la contraseña, por favor",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ConfiguracionActivity.this, "Verifique la contraseña, por favor", Toast.LENGTH_SHORT).show();
                                     }
-
                                 }
                             });
-
                 }
-
             }
 
             @Override
@@ -283,14 +255,13 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
 
             }
         });
-        emailRep=0;
+        emailRep = 0;
     }
-
 
 
     private void guardaEmail(final String email, final DatabaseReference rootRef) {
         final String ID = user.getUid();
-        final HashMap<String,Object> userdataMap=new HashMap<>();
+        final HashMap<String, Object> userdataMap = new HashMap<>();
 
         //inputEmail.getText().toString.trim
         user.updateEmail(email)
@@ -298,10 +269,10 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            userdataMap.put("email",email);
+                            userdataMap.put("email", email);
                             rootRef.child("Usuarios").child(ID).updateChildren(userdataMap);
-                        }else{
-                            Toast.makeText(ConfiguracionActivity.this,"Error en la inserción de email", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ConfiguracionActivity.this, "Error en la inserción de email", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -309,40 +280,40 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
 
     private void guardaPassword(final String password, final DatabaseReference rootRef) {
         final String ID = user.getUid();
-        final HashMap<String,Object> userdataMap=new HashMap<>();
+        final HashMap<String, Object> userdataMap = new HashMap<>();
         user.updatePassword(password).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    userdataMap.put("password",password);
+                if (task.isSuccessful()) {
+                    userdataMap.put("password", password);
                     rootRef.child("Usuarios").child(ID).updateChildren(userdataMap);
-                }else{
-                    Toast.makeText(ConfiguracionActivity.this,"UPS. ocurrio un error al modificar contraseña",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ConfiguracionActivity.this, "UPS. ocurrio un error al modificar contraseña", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
 
-    private void actualizaPerfil(String nombre, String apellido, String edad, DatabaseReference rootRef) {
+    private void actualizaPerfil(String nombre, String apellido, int edad, DatabaseReference rootRef) {
         final String ID = user.getUid();
-        HashMap<String,Object> userdataMap=new HashMap<>();
-        userdataMap.put("nombre",nombre);
-        userdataMap.put("apellido",apellido);
-        userdataMap.put("edad",edad);
+        HashMap<String, Object> userdataMap = new HashMap<>();
+        userdataMap.put("nombre", nombre);
+        userdataMap.put("apellido", apellido);
+        userdataMap.put("edad", edad);
         rootRef.child("Usuarios").child(ID).updateChildren(userdataMap);
     }
 
 
     private void actualizaImagen(final Uri imageUri, final DatabaseReference rootRef) {
 
-        if(imageUri!=null){
-            final StorageReference fileref=storageProfilePictureRef.child(user.getUid()+".jpg");
-            uploadTask=fileref.putFile(imageUri);
+        if (imageUri != null) {
+            final StorageReference fileref = storageProfilePictureRef.child(user.getUid() + ".jpg");
+            uploadTask = fileref.putFile(imageUri);
             uploadTask.continueWithTask(new Continuation() {
                 @Override
                 public Object then(@NonNull Task task) throws Exception {
-                    if(!task.isSuccessful()){
+                    if (!task.isSuccessful()) {
                         throw task.getException();
                     }
                     return fileref.getDownloadUrl();
@@ -350,22 +321,21 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()){
-                        Uri downloadUrl=task.getResult();
-                        myUrl=downloadUrl.toString();
-                        HashMap<String,Object> userMap= new HashMap<>();
-                        userMap.put("foto",myUrl);
-
+                    if (task.isSuccessful()) {
+                        Uri downloadUrl = task.getResult();
+                        myUrl = downloadUrl.toString();
+                        HashMap<String, Object> userMap = new HashMap<>();
+                        userMap.put("foto", myUrl);
+/*
                         //FIJAMOS FOTO DEL PERFIL DE FIREBASE
                         UserProfileChangeRequest profileUpdatesPhoto = new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build();
                         user.updateProfile(profileUpdatesPhoto);
-
+                        */
                         //ACTUALIZAMOS LOS DATOS CUYO NODO PRINCIPAL SEA IDÉNTICO AL ID DEL USUARIO ACTUAL
                         rootRef.child("Usuarios").child(user.getUid()).updateChildren(userMap);
+                    } else {
 
-                    }else{
-
-                        Toast.makeText(ConfiguracionActivity.this,"Error en la modificación de foto", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ConfiguracionActivity.this, "Error en la modificación de foto", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -375,9 +345,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
-
         switch (item.getItemId()) {
-
             case R.id.menu_gestionar:
                 Intent i = new Intent(this, ActivityGestionar.class);
                 startActivity(i);
@@ -390,18 +358,16 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                 Intent b = new Intent(this, ConfiguracionActivity.class);
                 startActivity(b);
                 break;
-
             case R.id.cerrar_sesion:
                 signOut();
                 break;
         }
-
         return true;
     }
 
     private void signOut() {
         mAuth = FirebaseAuth.getInstance();
-        user=mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
         androidx.appcompat.app.AlertDialog.Builder alert = new androidx.appcompat.app.AlertDialog.Builder(this);
         alert.setMessage(R.string.logout);
         alert.setCancelable(false);
@@ -450,33 +416,38 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
 
                                 String fotoBBDD = null;
                                 //Se obtiene el url de ubicación de la foto en caso de estar guardado
-                                if(snapShot.child("foto").exists()){
-                                    fotoBBDD=datosUsuario.getFoto();
+                                if (snapShot.child("foto").exists()) {
+                                    fotoBBDD = datosUsuario.getFoto();
                                 }
                                 //Se obtienen nombre y apellidos
                                 String nombreBBDD = datosUsuario.getNombre();
                                 String apellidosBBDD = datosUsuario.getApellido();
                                 int edadBBDD = datosUsuario.getEdad();
-                                String emailBBDD= datosUsuario.getEmail();
-                                String passwordBBDD=datosUsuario.getPassword();
+                                String emailBBDD = datosUsuario.getEmail();
+                                String passwordBBDD = datosUsuario.getPassword();
 
-                                //Se introducen los datos obtenidos en los elementos de la vista
-                                if(fotoBBDD!=null){
-                                    Picasso.get().load(fotoBBDD).into(profileImage);
-                                    Picasso.get().load(fotoBBDD).into(imagenperfil);
+                                if (fotoBBDD != null) {
+                                    //Glide.with(context).load(fotoBBDD).into(navUserPhot);
+                                    // TODO ARREGLAR CARGAR FOTO DE FIREBASE
+                                    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                                    storageReference = storageReference.child("imagenesUsuarios/" + idBBDD + ".jpg");
+                                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            Picasso.get().load(uri).into(imagenperfil);
+                                        }
+                                    });
+
+                                } else {
+                                    imagenperfil.setImageResource(R.drawable.seusuario);
                                 }
-
-                                userName.setText(nombreBBDD+" "+apellidosBBDD);
-
+                                userName.setText(nombreBBDD + " " + apellidosBBDD);
                                 //Rellenamos los campos con los datos actuales
                                 nombrepersona.setText(nombreBBDD);
                                 apellidopersona.setText(apellidosBBDD);
                                 edadpersona.setText(edadBBDD + "");
                                 correopersona.setText(emailBBDD);
                                 nuevacontra.setText(passwordBBDD);
-
-
-
                             }
                         }
 
@@ -486,12 +457,10 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                         }
                     });
                 }
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -502,7 +471,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
         apellidopersona = (EditText) findViewById(R.id.apellidoPersona);
         edadpersona = (EditText) findViewById(R.id.edadPersona);
         correopersona = (EditText) findViewById(R.id.correoPersona);
-        nuevacontra= (EditText) findViewById(R.id.nuevaContrasena);
+        nuevacontra = (EditText) findViewById(R.id.nuevaContrasena);
         guardar = (Button) findViewById(R.id.guardarDatos);
     }
 }

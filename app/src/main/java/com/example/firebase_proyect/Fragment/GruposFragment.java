@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,13 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebase_proyect.Activity.AgregarGrupos;
 import com.example.firebase_proyect.Models.Grupos;
@@ -33,21 +25,30 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class GruposFragment extends Fragment {
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     RecyclerView recyclerView;
-    static String grupo="";
+    static String grupo = "";
+
     public GruposFragment() {
         // Required empty public constructor
     }
 
 
     @Override
-    public void onCreate( Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
@@ -66,22 +67,19 @@ public class GruposFragment extends Fragment {
                 public boolean onQueryTextChange(String newText) {
                     //Log.i("onQueryTextChange", newText);
 
-                    grupo=searchView.getQuery().toString();
+                    grupo = searchView.getQuery().toString();
                     onStart();
                     return false;
                 }
+
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    grupo=searchView.getQuery().toString();
+                    grupo = searchView.getQuery().toString();
                     onStart();
                     return false;
                 }
-
             };
-
             searchView.setOnQueryTextListener(queryTextListener);
-
-
         }
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -101,14 +99,13 @@ public class GruposFragment extends Fragment {
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
 
         final DatabaseReference GruposRef = FirebaseDatabase.getInstance().getReference().child("Grupos");
 
-        FirebaseRecyclerOptions<Grupos> opciones= new FirebaseRecyclerOptions.
+        FirebaseRecyclerOptions<Grupos> opciones = new FirebaseRecyclerOptions.
                 Builder<Grupos>().setQuery(GruposRef.orderByChild("nombre").startAt(grupo), Grupos.class).build();
         FirebaseRecyclerAdapter<Grupos, GrupoHolder> adapter = new FirebaseRecyclerAdapter<Grupos, GrupoHolder>(opciones) {
             @Override
@@ -122,7 +119,7 @@ public class GruposFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         //te muestra las dos opciones que tiene de modificar y eliminar
-                        final CharSequence opciones[]= new CharSequence[]{
+                        final CharSequence opciones[] = new CharSequence[]{
                                 "Modificar",
                                 "Eliminar"
                         };
@@ -133,15 +130,15 @@ public class GruposFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
 
-                                if(i==0){
-                                    grupo="";
-                                    Intent intent= new Intent(getContext(), AgregarGrupos.class);
+                                if (i == 0) {
+                                    grupo = "";
+                                    Intent intent = new Intent(getContext(), AgregarGrupos.class);
                                     intent.putExtra("IDgroup", model.getID());
                                     startActivity(intent);
                                 }
 
-                                if(i==1){
-                        //Alerta de dialogo donde te indica si lo quieres eliminar
+                                if (i == 1) {
+                                    //Alerta de dialogo donde te indica si lo quieres eliminar
                                     AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
                                     builder1.setTitle("Eliminar grupo");
                                     builder1.setMessage("¿Esta seguro de que quieres eliminar el grupo de la lista?");
@@ -156,8 +153,8 @@ public class GruposFragment extends Fragment {
                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
-                                                            if(task.isSuccessful()){
-                                                                Toast.makeText(getContext(),"Grupo eliminado de la lista",Toast.LENGTH_SHORT).show();
+                                                            if (task.isSuccessful()) {
+                                                                Toast.makeText(getContext(), "Grupo eliminado de la lista", Toast.LENGTH_SHORT).show();
                                                                 notifyItemRemoved(position);
                                                             }
                                                         }
@@ -183,8 +180,8 @@ public class GruposFragment extends Fragment {
             @NonNull
             @Override
             public GrupoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.groups_item_layout, parent, false);
-                GrupoHolder holder= new GrupoHolder(view);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item_grupo, parent, false);
+                GrupoHolder holder = new GrupoHolder(view);
                 return holder;
             }
         };
@@ -199,20 +196,20 @@ public class GruposFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // se infla el layout en este fragment
-        View view=inflater.inflate(R.layout.fragment_grupos, container, false);
+        View view = inflater.inflate(R.layout.fragment_grupos, container, false);
         //recyclerview donde contendrá el cardview
         RecyclerView.LayoutManager layoutManager;
         recyclerView = view.findViewById(R.id.recycler_groups);
         recyclerView.setHasFixedSize(true);
-        layoutManager=new LinearLayoutManager(getContext());
+        layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        FloatingActionButton addGroup_btn= view.findViewById(R.id.gruposagregar);
+        FloatingActionButton addGroup_btn = view.findViewById(R.id.gruposagregar);
         addGroup_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                grupo="";
-                Intent intent= new Intent(getContext(), AgregarGrupos.class);
+                grupo = "";
+                Intent intent = new Intent(getContext(), AgregarGrupos.class);
                 startActivity(intent);
 
             }

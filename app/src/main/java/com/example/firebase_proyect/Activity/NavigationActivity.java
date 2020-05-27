@@ -1,16 +1,5 @@
 package com.example.firebase_proyect.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-
-import com.example.firebase_proyect.Fragment.AlumnosFragment;
-import com.example.firebase_proyect.Models.Users;
-import com.google.android.material.navigation.NavigationView;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,11 +7,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.firebase_proyect.Fragment.UsersFragment;
+import com.example.firebase_proyect.Models.Users;
 import com.example.firebase_proyect.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,15 +22,22 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.squareup.picasso.Picasso;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 public class NavigationActivity extends AppCompatActivity {
 
+    boolean isDark = false;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    boolean isDark = false;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
 
@@ -53,7 +52,6 @@ public class NavigationActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.navview);
 
-
         updateNavHeader(user);
 
         setFragmentByDefault();
@@ -61,9 +59,7 @@ public class NavigationActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-
             }
-
             @Override
             public void onDrawerOpened(View drawerView) {
                 getSupportActionBar().hide();
@@ -85,10 +81,7 @@ public class NavigationActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 boolean fragmentTransaction = false;
                 Activity fragment = null;
-
-
                 switch (item.getItemId()) {
-
                     case R.id.menu_gestionar:
                         Intent i = new Intent(NavigationActivity.this, ActivityGestionar.class);
                         startActivity(i);
@@ -101,14 +94,10 @@ public class NavigationActivity extends AppCompatActivity {
                         Intent b = new Intent(NavigationActivity.this, ConfiguracionActivity.class);
                         startActivity(b);
                         break;
-
                     case R.id.cerrar_sesion:
                         signOut();
                         break;
                 }
-
-
-
               /*  if (fragmentTransaction) {
                     changeFragment(fragment, item);
                     drawerLayout.closeDrawers();
@@ -116,7 +105,6 @@ public class NavigationActivity extends AppCompatActivity {
                 return true;
             }
         });
-
 
 
     }
@@ -139,7 +127,7 @@ public class NavigationActivity extends AppCompatActivity {
                             View headerView = navigationView.getHeaderView(0);
                             TextView navUsername = headerView.findViewById(R.id.nav_username);
                             TextView navUserLastname = headerView.findViewById(R.id.nav_lastname);
-                            ImageView navUserPhot = headerView.findViewById(R.id.nav_user_photo);
+                            final ImageView navUserPhot = headerView.findViewById(R.id.nav_user_photo);
                             //Se obtiene la ID del usuario actual
                             String id = user.getUid();
                             //Se obtienen los string que representan las IDs en la BBDD
@@ -148,23 +136,23 @@ public class NavigationActivity extends AppCompatActivity {
                             //se obtienen los datos
                             if (idBBDD.equals(id)) {
                                 String fotoBBDD = null;
-                                /*
-                                //Se obtiene el url de ubicación de la foto en caso de estar guardado
-                                if(snapShot.child("foto").exists()){
-                                    fotoBBDD=datosUsuario.getFoto();
-                                }
-
-                                 */
                                 //Se obtienen nombre y apellidos
                                 String nombreBBDD = datosUsuario.getNombre();
                                 String apellidosBBDD = datosUsuario.getApellido();
 
                                 fotoBBDD = datosUsuario.getFoto();
                                 //Se introducen los datos obtenidos en los elementos de la vista
-                                if(fotoBBDD!=null){
-                                    //Glide.with(context).load(fotoBBDD).into(navUserPhot);
-                                    // TODO ARREGLAR CARGAR FOTO DE FIREBASE
-                                    Picasso.get().load(fotoBBDD).into(navUserPhot);
+                                if (fotoBBDD != null) {
+                                    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                                    storageReference = storageReference.child("imagenesUsuarios/" + idBBDD + ".jpg");
+                                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            Picasso.get().load(uri).into(navUserPhot);
+                                        }
+                                    });
+                                } else {
+                                    navUserPhot.setImageResource(R.drawable.seusuario);
                                 }
                                 navUserLastname.setText(apellidosBBDD);
                                 navUsername.setText(nombreBBDD);
@@ -187,19 +175,11 @@ public class NavigationActivity extends AppCompatActivity {
         });
 
 
-
-       // navUserMail.setText(user.getEmail());
+        // navUserMail.setText(user.getEmail());
         //navUsername.setText(Users.getNombre());
 
-        // now we will use Glide to load user image
-        // first we need to import the library
-
-        // Glide.with(this).load(currentUser.getPhotoUrl()).into(navUserPhot);
-
-
-
-
     }
+
     private void setToolbar() {
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setActionBar(toolbar);
@@ -208,11 +188,12 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void setFragmentByDefault() {
-        changeFragment(new AlumnosFragment(), navigationView.getMenu().getItem(0));
+        changeFragment(new UsersFragment(), navigationView.getMenu().getItem(0));
     }
+
     private void signOut() {
         mAuth = FirebaseAuth.getInstance();
-        user=mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setMessage(R.string.logout);
         alert.setCancelable(false);
@@ -234,6 +215,7 @@ public class NavigationActivity extends AppCompatActivity {
         });
         alert.show();
     }
+
     private void changeFragment(Fragment fragment, MenuItem item) {
         getSupportFragmentManager()
                 .beginTransaction()
