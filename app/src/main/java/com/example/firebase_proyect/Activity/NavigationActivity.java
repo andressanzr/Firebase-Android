@@ -54,7 +54,7 @@ public class NavigationActivity extends AppCompatActivity {
 
         updateNavHeader(user);
 
-        setFragmentByDefault();
+
         getSupportActionBar().setTitle("Gestionar");
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -106,6 +106,7 @@ public class NavigationActivity extends AppCompatActivity {
             }
         });
 
+        setFragmentByDefault();
 
     }
 

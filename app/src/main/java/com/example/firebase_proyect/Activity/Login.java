@@ -15,9 +15,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.firebase_proyect.R;
 import com.example.firebase_proyect.Utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,7 +23,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class Login extends AppCompatActivity {
     private Button login;
@@ -54,12 +52,9 @@ public class Login extends AppCompatActivity {
         loginPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent registerActivity = new Intent(getApplicationContext(), RegistrarActivity.class);
                 startActivity(registerActivity);
                 finish();
-
-
             }
         });
         //comprueba los datos introducidos para que se puedan loguearse
@@ -72,10 +67,8 @@ public class Login extends AppCompatActivity {
 
                 if (mail.isEmpty() || password.isEmpty()) {
                     showMessage("Porfavor. Verifique los campos");
-                }
-                else
-                {
-                    signIn(mail,password);
+                } else {
+                    signIn(mail, password);
                 }
             }
         });
@@ -84,7 +77,7 @@ public class Login extends AppCompatActivity {
         setCredentialsIfExist();
 
         //Si el switch está activado guarda los valores introducidos en los campos de email y password
-        recuerdame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        recuerdame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showMessage("Se activo el recuerdame");
@@ -97,52 +90,49 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 Intent loggy = new Intent(Login.this, RegistrarActivity.class);
                 startActivity(loggy);
-
             }
         });
         botonreset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this,RecuperarcontraActivity.class);
+                Intent intent = new Intent(Login.this, RecuperarcontraActivity.class);
                 startActivity(intent);
             }
         });
-
-
     }
-
 
     //declaración variables
     private void References() {
         botonreset = (TextView) findViewById(R.id.RecuperarContraseña);
         login = (Button) findViewById(R.id.botonLogin);
-        recuerdame= (Switch) findViewById(R.id.remember_me_switch);
+        recuerdame = (Switch) findViewById(R.id.remember_me_switch);
         registro = (Button) findViewById(R.id.botonRegistro);
         emailInicial = (EditText) findViewById(R.id.MailInicial);
         passwordInicial = (EditText) findViewById(R.id.PasswordInicial);
         loginPhoto = (ImageView) findViewById(R.id.login_photo);
-
-
     }
+
     //comprueba los datos
     private boolean isValidData() {
         if (emailInicial.getText().toString().length() > 0 &&
                 passwordInicial.getText().toString().length() > 0
-                ){
+        ) {
             return true;
-        } else{
+        } else {
             return false;
         }
     }
-    private  boolean validar(){
-        String correo=emailInicial.getText().toString().trim();
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(correo).matches()){
+    private boolean validar() {
+        String correo = emailInicial.getText().toString().trim();
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
             Toast.makeText(this, "Ingresa un email válido", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
+
     //método que fija el email y contraseña que se hayan guardado
     private void setCredentialsIfExist() {
         String email = Utils.getUserMailPrefs(mSharedPreferences);
@@ -153,27 +143,21 @@ public class Login extends AppCompatActivity {
             recuerdame.setChecked(true);
         }
     }
+
     //método para corroborar que el usuario se encuentre en la base de datos
     private void signIn(String mail, String password) {
-
-
-        mAuth.signInWithEmailAndPassword(mail,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(mail, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-
                 if (task.isSuccessful()) {
                     updateUI();
-
-                }
-                else {
+                } else {
                     showMessage(task.getException().getMessage());
-
                 }
-
-
             }
         });
     }
+
     //método que guarda el email y contraseña introducidos
     private void saveOnPreferences(String email, String password) {
         if (recuerdame.isChecked()) {
@@ -185,6 +169,7 @@ public class Login extends AppCompatActivity {
             Utils.removeSharedPreferences(mSharedPreferences);
         }
     }
+
     //Termina el activity
     private void updateUI() {
         startActivity(MainActivity);
@@ -193,7 +178,7 @@ public class Login extends AppCompatActivity {
 
     private void showMessage(String text) {
 
-        Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
     }
 
     //mantiene la sesión del usuario abierta una vez registrado
@@ -204,7 +189,6 @@ public class Login extends AppCompatActivity {
         if (user != null) {
             //el usuario ya está conectado, por lo que debemos redirigirlo a la página de inicio
             updateUI();
-
         }
     }
 

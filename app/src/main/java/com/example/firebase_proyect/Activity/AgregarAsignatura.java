@@ -19,6 +19,7 @@ import com.example.firebase_proyect.Models.Asignaturas;
 import com.example.firebase_proyect.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -59,11 +60,9 @@ public class AgregarAsignatura extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         SubjectsRef= FirebaseDatabase.getInstance().getReference().child("Asignaturas");
         SubjectsImagesRef= FirebaseStorage.getInstance().getReference().child("Imagenes asignaturas");
         References();
-
 
 
         fotoAsignatura.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +97,6 @@ public class AgregarAsignatura extends AppCompatActivity {
 
     private void getSubjectInfo(final String IDexistente) {
 
-
         SubjectsRef= FirebaseDatabase.getInstance().getReference().child("Asignaturas");
 
         SubjectsRef.addValueEventListener(new ValueEventListener() {
@@ -115,17 +113,26 @@ public class AgregarAsignatura extends AppCompatActivity {
                             if (idBd.equals(id)) {
 
                                 String fotoBd = null;
-                                if(snapShot.child("foto").exists()){
-                                    fotoBd=datosAsignatura.getFoto();
+                                fotoBd = datosAsignatura.getFoto();
+                                //Se introducen los datos obtenidos en los elementos de la vista
+                                if (fotoBd != null) {
+                                    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                                    storageReference = storageReference.child("Imagenes Asignaturas/" + IDexistente + ".jpg");
+                                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            Picasso.get().load(uri).into(fotoAsignatura);
+                                        }
+                                    });
+                                } else {
+                                    fotoAsignatura.setImageResource(R.drawable.imagecurso);
                                 }
+
                                 //declaración para que devuelva los balores
                                 String name = datosAsignatura.getNombre();
                                 String course = datosAsignatura.getCurso();
                                 String descripcion = datosAsignatura.getDescripcion();
-                                //si la foto no es null muestra la foto ingresada
-                                if(fotoBd!=null){
-                                    Picasso.get().load(fotoBd).resize(250,250).into(fotoAsignatura);
-                                }
+
 
                                 nombreAsig.setText(name);
                                 nombreCurs.setText(course);

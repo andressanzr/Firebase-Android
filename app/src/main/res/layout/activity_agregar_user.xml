@@ -6,18 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".Activity.RegistrarActivity">
 
-    <ImageView
-        android:id="@+id/imageViewFondo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/fondo"
-        android:scaleType="centerCrop" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#D8141414"
         android:gravity="center"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="0dp"
@@ -28,12 +20,12 @@
             android:id="@+id/reUser"
             android:layout_width="90dp"
             android:layout_height="90dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             android:src="@drawable/seusuario"
             app:layout_constraintBottom_toTopOf="@+id/regName"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,8 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cambiar Foto"
-            android:textSize="16dp"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textSize="16dp" />
 
         <EditText
             android:id="@+id/Nombre"
@@ -54,16 +46,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="28dp"
-            android:layout_marginRight="28dp"
-            android:background="@drawable/border"
-            android:ems="10"
-            android:textColor="#fff"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="28dp"
+            android:ems="10"
             android:hint="Nombre"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColorHint="#ccc"></EditText>
+            android:paddingBottom="10dp"></EditText>
 
         <EditText
             android:id="@+id/Apellidos"
@@ -71,16 +60,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="28dp"
-            android:layout_marginRight="28dp"
-            android:background="@drawable/border"
-            android:ems="10"
-            android:textColor="#fff"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="28dp"
+            android:ems="10"
             android:hint="Apellidos"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColorHint="#ccc"></EditText>
+            android:paddingBottom="10dp"></EditText>
 
         <EditText
             android:id="@+id/edad"
@@ -88,18 +74,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="28dp"
-            android:layout_marginRight="28dp"
-            android:inputType="phone"
-            android:background="@drawable/border"
-            android:maxLength="9"
-            android:ems="10"
-            android:textColor="#fff"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="28dp"
+            android:ems="10"
             android:hint="Edad"
+            android:inputType="phone"
+            android:maxLength="9"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColorHint="#ccc"></EditText>
+            android:paddingBottom="10dp"></EditText>
 
         <EditText
             android:id="@+id/MailInicial"
@@ -107,17 +90,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="28dp"
-            android:layout_marginRight="28dp"
-            android:background="@drawable/border"
-            android:ems="10"
-            android:textColor="#fff"
-            android:inputType="textEmailAddress"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="28dp"
+            android:ems="10"
             android:hint="Correo electrónico"
+            android:inputType="textEmailAddress"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColorHint="#ccc"></EditText>
+            android:paddingBottom="10dp"></EditText>
 
 
         <EditText
@@ -126,18 +106,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="28dp"
-            android:layout_marginRight="28dp"
-            android:textColor="#fff"
-            android:hint="Contraseña"
-            android:textColorHint="#ccc"
-            android:ems="10"
-            android:paddingLeft="10dp"
             android:layout_marginTop="20dp"
+
+            android:layout_marginRight="28dp"
+
             android:layout_marginBottom="10dp"
+            android:ems="10"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:paddingLeft="10dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:background="@drawable/border"
-            android:inputType="textPassword"></EditText>
+
+            android:paddingBottom="10dp"></EditText>
 
 
         <Button
@@ -146,24 +126,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="28dp"
-            android:layout_marginRight="28dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="28dp"
             android:layout_marginBottom="10dp"
             android:text="Crear Usuario"
-            android:textColor="#fffdf9"
             android:textSize="18dp"></Button>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_marginRight="28dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="28dp"
             android:layout_marginTop="25dp"
+            android:layout_marginRight="28dp"
             android:gravity="center"
-            android:layout_height="wrap_content">
-
-
-        </LinearLayout>
+            android:orientation="vertical"></LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

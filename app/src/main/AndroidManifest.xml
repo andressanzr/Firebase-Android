@@ -20,6 +20,7 @@
         <activity android:name=".Activity.NavigationActivity" />
         <activity android:name=".Activity.RecuperarcontraActivity" />
         <activity android:name=".Activity.RegistrarActivity" />
+        <activity android:name=".Activity.AgregarUser" />
         <activity android:name=".Activity.Login" />
         <activity android:name=".Activity.SplashActivity">
             <intent-filter>
