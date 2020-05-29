@@ -201,8 +201,6 @@ public class AgregarAsignatura extends AppCompatActivity {
 
 
     private void saveInfoSubjectinBBDD(String subjectName, String subjectCourse, String subjectDescription) {
-
-
         if(IDexistente!=null){
             ID=IDexistente;
         }else{
@@ -214,7 +212,6 @@ public class AgregarAsignatura extends AppCompatActivity {
         subjectMap.put("nombre",subjectName);
         subjectMap.put("curso",subjectCourse);
         subjectMap.put("descripcion",subjectDescription);
-
         try{
             addPhoto(ImagenUri,SubjectsRef,ID);
         }catch (NullPointerException e){

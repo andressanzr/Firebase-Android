@@ -14,7 +14,6 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="20px"
         app:layout_constraintTop_toTopOf="parent" />
 
 

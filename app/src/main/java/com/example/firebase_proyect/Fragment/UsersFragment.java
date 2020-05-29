@@ -177,12 +177,12 @@ public class UsersFragment extends Fragment {
                                 if (i == 0) {
                                     user = "";
                                     Intent intent = new Intent(getContext(), AgregarUser.class);
-                                    intent.putExtra("IDsubject", model.getID());
+                                    intent.putExtra("IDuser", model.getID());
                                     startActivity(intent);
                                 }
                                 if (i == 1) {
                                     androidx.appcompat.app.AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
-                                    builder1.setTitle("Eliminar asignatura");
+                                    builder1.setTitle("Eliminar usuario");
                                     builder1.setMessage("¿Estas seguro que quieres eliminar al usuario de la lista?");
                                     LayoutInflater inflater = getActivity().getLayoutInflater();
 

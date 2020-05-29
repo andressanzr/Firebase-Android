@@ -1,6 +1,10 @@
 package com.example.firebase_proyect.Activity;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -25,11 +29,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AgregarUser extends AppCompatActivity {
@@ -45,7 +52,7 @@ public class AgregarUser extends AppCompatActivity {
     private Uri pickedImgUri;
     StorageTask uploadTask;
     String myUrl = "";
-
+    Bundle intentExtras;
     //Para guardar info en el storage de Firebase
     StorageReference storageProfilePictureRef;
 
@@ -57,9 +64,9 @@ public class AgregarUser extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         fileStorage = FirebaseStorage.getInstance();
-
-        if (getIntent().getExtras().getString("IDsubject") != null) {
-            getUserInfo(getIntent().getExtras().getString("IDsubject"));
+        intentExtras = getIntent().getExtras();
+        if (intentExtras.containsKey("IDuser")) {
+            getUserInfo(getIntent().getExtras().getString("IDuser"));
         }
 
         registro.setOnClickListener(new View.OnClickListener() {
@@ -78,12 +85,59 @@ public class AgregarUser extends AppCompatActivity {
                 } else {
                     //todo está bien y todos los campos están llenos ahora podemos comenzar a crear una cuenta de usuario
                     // El método CreateUserAccount intentará crear el usuario si el correo electrónico es válido
-
                     CreateUserAccount(name, lastname, age, email, password);
                 }
             }
 
         });
+        ImgUserPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= 22) {
+                    checkAndRequestForPermission();
+                } else {
+                    CropImage.activity(pickedImgUri).setAspectRatio(1, 1).start(AgregarUser.this);
+                    openGallery();
+                }
+            }
+        });
+    }
+
+    private void checkAndRequestForPermission() {
+        if (ContextCompat.checkSelfPermission(AgregarUser.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                //permiso para poder acceder la galería
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(AgregarUser.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                Toast.makeText(AgregarUser.this, "Please accept for required permission", Toast.LENGTH_SHORT).show();
+
+            } else {
+                ActivityCompat.requestPermissions(AgregarUser.this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        1);
+            }
+
+        } else
+            openGallery();
+
+    }
+
+    private void openGallery() {
+        //abre la intención de la galería y espera a que el usuario elija una imagen
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        startActivityForResult(galleryIntent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == 1 && data != null) {
+            //el usuario ha elegido con éxito una imagen
+            // necesitamos guardar su referencia a una variable Uri
+            pickedImgUri = data.getData();
+            ImgUserPhoto.setImageURI(pickedImgUri);
+        }
     }
 
     private void getUserInfo(final String IdUser) {
@@ -126,7 +180,7 @@ public class AgregarUser extends AppCompatActivity {
                                 Nombre.setText(nombreBd);
                                 Apellidos.setText(apellidosBd);
                                 MailInicial.setText(emailBd);
-                                edad.setText(edadBd);
+                                edad.setText(edadBd + "");
                             }
                         }
 
@@ -136,16 +190,12 @@ public class AgregarUser extends AppCompatActivity {
                         }
                     });
                 }
-
             }
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-
     }
 
     private void CreateUserAccount(final String nombre, final String apellido, final int edad, final String email, final String password) {
@@ -156,20 +206,24 @@ public class AgregarUser extends AppCompatActivity {
         if (password.length() < 6) {
             Toast.makeText(AgregarUser.this, "Debe introducir un password de al menos 6 caracteres", Toast.LENGTH_SHORT).show();
         } else {
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(AgregarUser.this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        // el usuario creo la cuenta correctamente
-                        showMessage("Se creo la cuenta");
-                        // after we created user account we need to update his profile picture and name
-                        updateUserInfo(nombre, apellido, edad, email, password, RootRef);
-                    } else {
-                        // account creation failed
-                        showMessage("account creation failed" + task.getException().getMessage());
+            if (intentExtras.containsKey("IDuser")) {
+                updateUserInfo(nombre, apellido, edad, email, password, RootRef);
+            } else {
+                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(AgregarUser.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // el usuario creo la cuenta correctamente
+                            showMessage("Se creo la cuenta");
+                            // after we created user account we need to update his profile picture and name
+                            updateUserInfo(nombre, apellido, edad, email, password, RootRef);
+                        } else {
+                            // account creation failed
+                            showMessage("account creation failed" + task.getException().getMessage());
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
 
@@ -199,13 +253,15 @@ public class AgregarUser extends AppCompatActivity {
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
+                            if (intentExtras.containsKey("IDuser")) {
+                                Intent intent = new Intent(AgregarUser.this, ActivityGestionar.class);
+                                startActivity(intent);
+                            }
                         } else { //En caso de error
                             showMessage("Error en guardar los datos");
                         }
                     }
                 });
-
-
     }
 
     private void actualizaImagen(final Uri imageUri, final String userID, final DatabaseReference rootRef) {
