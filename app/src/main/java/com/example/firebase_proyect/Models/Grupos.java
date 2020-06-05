@@ -2,10 +2,10 @@ package com.example.firebase_proyect.Models;
 
 public class Grupos {
 
-    private String ID, numero, nombre;
+    private String ID, nombre;
+    private int numero;
 
-
-    public Grupos(String ID, String numero, String nombre) {
+    public Grupos(String ID, int numero, String nombre) {
         this.ID = ID;
         this.numero = numero;
         this.nombre = nombre;
@@ -16,7 +16,6 @@ public class Grupos {
 
     }
 
-
     public String getID() {
         return ID;
     }
@@ -25,19 +24,19 @@ public class Grupos {
         this.ID = ID;
     }
 
-    public String getNumero() {
-        return numero;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
     public String getNombre() {
         return nombre;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
     }
 }

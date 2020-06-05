@@ -3,6 +3,7 @@ package com.example.firebase_proyect.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -15,13 +16,23 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.firebase_proyect.Models.Users;
 import com.example.firebase_proyect.R;
 import com.example.firebase_proyect.Utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,7 +57,8 @@ public class Login extends AppCompatActivity {
         References();
         //conexión con la base de datos en firebase
         mAuth = FirebaseAuth.getInstance();
-        MainActivity = new Intent(this, NavigationActivity.class);
+
+
         //inicia el shared Preference
         //al seleccionar la foto te manda a registrar
         loginPhoto.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +73,6 @@ public class Login extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String mail = emailInicial.getText().toString();
                 String password = passwordInicial.getText().toString();
 
@@ -145,12 +156,53 @@ public class Login extends AppCompatActivity {
     }
 
     //método para corroborar que el usuario se encuentre en la base de datos
-    private void signIn(String mail, String password) {
+    private void signIn(final String mail, final String password) {
         mAuth.signInWithEmailAndPassword(mail, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    updateUI();
+                    // comprobar si el usuario es alumno o profesor
+                    final DatabaseReference RootRef;
+                    final DatabaseReference Usersref = FirebaseDatabase.getInstance().getReference().child("Usuarios");
+                    Usersref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (final DataSnapshot snapShot : dataSnapshot.getChildren()) {
+                                Usersref.child(snapShot.getKey()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        Users datosUser = snapShot.getValue(Users.class);
+                                        String emailBd = datosUser.getEmail();
+                                        if (emailBd.equals(mail)) {
+                                            //Para extraer los datos de la BBDD con ayuda de la clase Usuarios
+                                            Users datosUsuario = dataSnapshot.getValue(Users.class);
+                                            int tipoUser = datosUsuario.getTipoUsuario();
+                                            if (tipoUser == 1) {
+                                                Intent intent = new Intent(Login.this, HomeAlumno.class);
+                                                startActivity(intent);
+                                                finish();
+                                            } else if (tipoUser == 2) {
+                                                Intent intent = new Intent(Login.this, MiGestion.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                 } else {
                     showMessage(task.getException().getMessage());
                 }
@@ -170,14 +222,8 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    //Termina el activity
-    private void updateUI() {
-        startActivity(MainActivity);
-        finish();
-    }
 
     private void showMessage(String text) {
-
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
     }
 
@@ -187,8 +233,35 @@ public class Login extends AppCompatActivity {
         super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
+            // comprobar si el usuario es alumno o profesor
+            // comprobar si el usuario es alumno o profesor
+            final DatabaseReference RootRef;
+
+            RootRef = FirebaseDatabase.getInstance().getReference().child("Usuarios");
+            RootRef.orderByChild("email").equalTo(user.getEmail())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            //Para extraer los datos de la BBDD con ayuda de la clase Usuarios
+                            Users datosUsuario = dataSnapshot.getValue(Users.class);
+                            int tipoUser = datosUsuario.getTipoUsuario();
+                            if (tipoUser == 1) {
+                                Intent intent = new Intent(Login.this, HomeAlumno.class);
+                                startActivity(intent);
+                                finish();
+                            } else if (tipoUser == 2) {
+                                Intent intent = new Intent(Login.this, MiGestion.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
             //el usuario ya está conectado, por lo que debemos redirigirlo a la página de inicio
-            updateUI();
         }
     }
 

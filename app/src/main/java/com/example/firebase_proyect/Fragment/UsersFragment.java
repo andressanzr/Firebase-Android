@@ -135,7 +135,7 @@ public class UsersFragment extends Fragment {
         final DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Usuarios");
 
         FirebaseRecyclerOptions<Users> opciones = new FirebaseRecyclerOptions.Builder<Users>()
-                .setQuery(UsersRef.orderByChild("nombre").startAt(user), Users.class)
+                .setQuery(UsersRef.orderByChild("nombre").startAt(UserQuery).endAt(UserQuery + "\uf8ff"), Users.class)
                 .build();
         FirebaseRecyclerAdapter<Users, UserHolder> adapter = new FirebaseRecyclerAdapter<Users, UserHolder>(opciones) {
             @Override

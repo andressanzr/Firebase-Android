@@ -148,7 +148,7 @@ public class RegistrarActivity extends AppCompatActivity {
         userdataMap.put("email", email);
         userdataMap.put("password", password);
         //tipo por defecto alumno
-        userdataMap.put("tipoUsuario", 0);
+        userdataMap.put("tipoUsuario", 1);
 
         rootRef.child("Usuarios").child(ID).updateChildren(userdataMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

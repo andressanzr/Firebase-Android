@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Activity.RegistrarActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -126,11 +125,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="28dp"
-            android:layout_marginTop="20dp"
             android:layout_marginRight="28dp"
-            android:layout_marginBottom="10dp"
-            android:text="Crear Usuario"
-            android:textSize="18dp"></Button>
+            android:layout_marginBottom="30dp"
+            android:textColor="#fffdf9"
+            android:text="GUARDAR"
+            android:background="@drawable/boton_redondo"></Button>
 
         <LinearLayout
             android:layout_width="match_parent"

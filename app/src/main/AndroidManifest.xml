@@ -8,11 +8,13 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.AgregarGrupos"></activity>
+        <activity android:name=".Activity.HomeAlumno"></activity>
+        <activity android:name=".Activity.AgregarGrupos" />
         <activity android:name=".Activity.AgregarAsignatura" />
         <activity android:name=".Activity.ActivityGestionar" />
         <activity android:name=".Activity.ConfiguracionActivity" />
@@ -21,6 +23,9 @@
         <activity android:name=".Activity.RecuperarcontraActivity" />
         <activity android:name=".Activity.RegistrarActivity" />
         <activity android:name=".Activity.AgregarUser" />
+        <activity
+            android:name=".Activity.MiGestion"
+            android:noHistory="true" />
         <activity android:name=".Activity.Login" />
         <activity android:name=".Activity.SplashActivity">
             <intent-filter>

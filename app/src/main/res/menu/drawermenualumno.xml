@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/reunionesAlumno"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Reuniones" />
+    </group>
+    <group>
+        <item
+            android:id="@+id/configuracionAlumno"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="Configuración usuario" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/cerrar_sesionAlumno"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="Cerrar sesión" />
+    </group>
+</menu>

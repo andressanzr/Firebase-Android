@@ -205,7 +205,6 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                     String idBBDD = datosUsuario.getID();
 
                     if (!ID.equals(idBBDD)) {
-
                         if (email.equals(emailBBDD)) {
                             emailRep++;
                         }
@@ -226,7 +225,6 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                     passValido = true;
                 }
                 if (emailValido && passValido) {
-
                     AuthCredential credential = EmailAuthProvider
                             .getCredential(user.getEmail(), originalPassword); // Current Login Credentials \\
                     // Prompt the user to re-provide their sign-in credentials
@@ -239,9 +237,11 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                                         guardaPassword(password, RootRef);
                                         actualizaPerfil(nombre, apellido, edad, RootRef);
                                         actualizaImagen(imageUri, RootRef);
+                                        startActivity(new Intent(ConfiguracionActivity.this, Login.class));
+                                        finish();
                                         mAuth.signOut();
                                         Toast.makeText(ConfiguracionActivity.this, "Perfil actualizado", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(ConfiguracionActivity.this, Login.class));
+
                                     } else {
                                         Toast.makeText(ConfiguracionActivity.this, "Verifique la contraseña, por favor", Toast.LENGTH_SHORT).show();
                                     }
@@ -326,11 +326,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                         myUrl = downloadUrl.toString();
                         HashMap<String, Object> userMap = new HashMap<>();
                         userMap.put("foto", myUrl);
-/*
-                        //FIJAMOS FOTO DEL PERFIL DE FIREBASE
-                        UserProfileChangeRequest profileUpdatesPhoto = new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build();
-                        user.updateProfile(profileUpdatesPhoto);
-                        */
+
                         //ACTUALIZAMOS LOS DATOS CUYO NODO PRINCIPAL SEA IDÉNTICO AL ID DEL USUARIO ACTUAL
                         rootRef.child("Usuarios").child(user.getUid()).updateChildren(userMap);
                     } else {

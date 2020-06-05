@@ -1,19 +1,20 @@
 package com.example.firebase_proyect.Models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Users {
     private String ID, nombre, apellido, email, password, foto;
     private int edad, tipoUsuario;
-    // tipo usuario 0 alumno
-    // tipo usuario 1 profesor
-    private Grupos grupoUser;
-    private ArrayList<Asignaturas> asignaturasUser;
+    // tipo usuario 1 alumno
+    // tipo usuario 2 profesor
+    private String grupoUser;
+    private ArrayList<String> asignaturasUser;
 
     public Users() {
     }
 
-    public Users(String ID, String nombre, String apellido, String email, String password, String foto, int edad, int tipoUsuario, Grupos grupoUser, ArrayList<Asignaturas> asignaturasUser) {
+    public Users(String ID, String nombre, String apellido, String email, String password, String foto, int edad, int tipoUsuario, String grupoUser, ArrayList<String> asignaturasUser) {
         this.ID = ID;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -90,19 +91,19 @@ public class Users {
         this.tipoUsuario = tipoUsuario;
     }
 
-    public Grupos getGrupoUser() {
+    public String getGrupoUser() {
         return grupoUser;
     }
 
-    public void setGrupoUser(Grupos grupoUser) {
+    public void setGrupoUser(String grupoUser) {
         this.grupoUser = grupoUser;
     }
 
-    public ArrayList<Asignaturas> getAsignaturasUser() {
+    public ArrayList<String> getAsignaturasUser() {
         return asignaturasUser;
     }
 
-    public void setAsignaturasUser(ArrayList<Asignaturas> asignaturasUser) {
+    public void setAsignaturasUser(ArrayList<String> asignaturasUser) {
         this.asignaturasUser = asignaturasUser;
     }
 }

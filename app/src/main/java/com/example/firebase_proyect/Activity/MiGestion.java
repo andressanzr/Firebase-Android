@@ -10,11 +10,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.firebase_proyect.Fragment.UsersFragment;
+import com.example.firebase_proyect.Adapter.PagerAdapter;
 import com.example.firebase_proyect.Models.Users;
 import com.example.firebase_proyect.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,19 +32,22 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
-public class NavigationActivity extends AppCompatActivity {
+public class MiGestion extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
 
+    private int tipoUsuario;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_gestionar);
         setToolbar();
         mAuth = FirebaseAuth.getInstance();
@@ -53,12 +57,12 @@ public class NavigationActivity extends AppCompatActivity {
 
         updateNavHeader(user);
 
-
         getSupportActionBar().setTitle("Gestionar");
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
             }
+
             @Override
             public void onDrawerOpened(View drawerView) {
                 getSupportActionBar().hide();
@@ -78,34 +82,56 @@ public class NavigationActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                boolean fragmentTransaction = false;
-                Activity fragment = null;
                 switch (item.getItemId()) {
                     case R.id.menu_gestionar:
-                        Intent i = new Intent(NavigationActivity.this, ActivityGestionar.class);
+                        Intent i = new Intent(MiGestion.this, ActivityGestionar.class);
                         startActivity(i);
                         break;
                     case R.id.reuniones:
-                        Intent a = new Intent(NavigationActivity.this, ReunionesActivity.class);
+                        Intent a = new Intent(MiGestion.this, ReunionesActivity.class);
                         startActivity(a);
                         break;
                     case R.id.configuracion:
-                        Intent b = new Intent(NavigationActivity.this, ConfiguracionActivity.class);
+                        Intent b = new Intent(MiGestion.this, ConfiguracionActivity.class);
                         startActivity(b);
                         break;
                     case R.id.cerrar_sesion:
                         signOut();
                         break;
                 }
-              /*  if (fragmentTransaction) {
-                    changeFragment(fragment, item);
-                    drawerLayout.closeDrawers();
-                }*/
                 return true;
             }
         });
 
-        //setFragmentByDefault();
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.addTab(tabLayout.newTab().setText("Usuarios"));
+        tabLayout.addTab(tabLayout.newTab().setText("Asignaturas"));
+        tabLayout.addTab(tabLayout.newTab().setText("Grupos"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("fragNumber")) {
+            viewPager.setCurrentItem(getIntent().getIntExtra("fragNumber", 1));
+        }
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                viewPager.setCurrentItem(position);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
 
     }
 
@@ -173,11 +199,6 @@ public class NavigationActivity extends AppCompatActivity {
 
             }
         });
-
-
-        // navUserMail.setText(user.getEmail());
-        //navUsername.setText(Users.getNombre());
-
     }
 
     private void setToolbar() {
@@ -187,11 +208,7 @@ public class NavigationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    /*
-        private void setFragmentByDefault() {
-            changeFragment(new UsersFragment(), navigationView.getMenu().getItem(0));
-        }
-    */
+
     private void signOut() {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -203,7 +220,7 @@ public class NavigationActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 mAuth.signOut();
                 //cierra la cuenta y le envia de nuevo al login
-                startActivity(new Intent(NavigationActivity.this, Login.class));
+                startActivity(new Intent(MiGestion.this, Login.class));
                 finish();
             }
         });
@@ -217,16 +234,6 @@ public class NavigationActivity extends AppCompatActivity {
         alert.show();
     }
 
-    /*
-        private void changeFragment(Fragment fragment, MenuItem item) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.content_frame, fragment)
-                    .commit();
-            item.setChecked(true);
-            getSupportActionBar().setTitle(item.getTitle());
-        }
-    */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -240,3 +247,4 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
 }
+

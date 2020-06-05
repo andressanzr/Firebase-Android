@@ -106,14 +106,14 @@ public class GruposFragment extends Fragment {
         final DatabaseReference GruposRef = FirebaseDatabase.getInstance().getReference().child("Grupos");
 
         FirebaseRecyclerOptions<Grupos> opciones = new FirebaseRecyclerOptions.
-                Builder<Grupos>().setQuery(GruposRef.orderByChild("nombre").startAt(grupo), Grupos.class).build();
+                Builder<Grupos>().setQuery(GruposRef.orderByChild("nombre").startAt(grupo).endAt(grupo + "\uf8ff"), Grupos.class).build();
         FirebaseRecyclerAdapter<Grupos, GrupoHolder> adapter = new FirebaseRecyclerAdapter<Grupos, GrupoHolder>(opciones) {
             @Override
             protected void onBindViewHolder(@NonNull GrupoHolder holder, final int position, @NonNull final Grupos model) {
 
                 //Direcciona y devuelve el nombre con el numero
                 holder.nombregrupo.setText(model.getNombre());
-                holder.numero.setText(model.getNumero());
+                holder.numero.setText(model.getNumero() + "");
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

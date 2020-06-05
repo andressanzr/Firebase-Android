@@ -224,7 +224,7 @@ public class AgregarAsignatura extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(AgregarAsignatura.this,"Asignaturas actualizadas en la base de datos",Toast.LENGTH_SHORT).show();
-                            Intent intent=new Intent(AgregarAsignatura.this,NavigationActivity.class).putExtra("fragNumber",2);
+                            Intent intent = new Intent(AgregarAsignatura.this, MiGestion.class).putExtra("fragNumber", 1);
                             startActivity(intent);
                         }else{
                             String mensaje= task.getException().toString();

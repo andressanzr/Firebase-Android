@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".Activity.ReunionesActivity">
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/list_view_asignaturas_alumno" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

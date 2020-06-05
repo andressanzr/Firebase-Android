@@ -65,7 +65,7 @@ public class AgregarUser extends AppCompatActivity {
 
         fileStorage = FirebaseStorage.getInstance();
         intentExtras = getIntent().getExtras();
-        if (intentExtras.containsKey("IDuser")) {
+        if (intentExtras != null && intentExtras.containsKey("IDuser")) {
             getUserInfo(getIntent().getExtras().getString("IDuser"));
         }
 
@@ -206,7 +206,7 @@ public class AgregarUser extends AppCompatActivity {
         if (password.length() < 6) {
             Toast.makeText(AgregarUser.this, "Debe introducir un password de al menos 6 caracteres", Toast.LENGTH_SHORT).show();
         } else {
-            if (intentExtras.containsKey("IDuser")) {
+            if (intentExtras != null && intentExtras.containsKey("IDuser")) {
                 updateUserInfo(nombre, apellido, edad, email, password, RootRef);
             } else {
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(AgregarUser.this, new OnCompleteListener<AuthResult>() {
@@ -225,8 +225,6 @@ public class AgregarUser extends AppCompatActivity {
                 });
             }
         }
-
-
     }
 
     private void updateUserInfo(String nombre, String apellido, int edad, String email, String password, final DatabaseReference rootRef) {
@@ -253,10 +251,12 @@ public class AgregarUser extends AppCompatActivity {
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
-                            if (intentExtras.containsKey("IDuser")) {
-                                Intent intent = new Intent(AgregarUser.this, ActivityGestionar.class);
+
+                            Intent intent = new Intent(AgregarUser.this, MiGestion.class).putExtra("fragNumber", 0);
+                            ;
+
                                 startActivity(intent);
-                            }
+
                         } else { //En caso de error
                             showMessage("Error en guardar los datos");
                         }

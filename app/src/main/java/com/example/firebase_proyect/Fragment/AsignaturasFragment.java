@@ -110,7 +110,7 @@ public class AsignaturasFragment extends Fragment {
         final DatabaseReference AsignaturasRef = FirebaseDatabase.getInstance().getReference().child("Asignaturas");
 
         FirebaseRecyclerOptions<Asignaturas> opciones = new FirebaseRecyclerOptions.Builder<Asignaturas>()
-                .setQuery(AsignaturasRef.orderByChild("nombre").startAt(asignatura), Asignaturas.class)
+                .setQuery(AsignaturasRef.orderByChild("nombre").startAt(asignatura).endAt(asignatura + "\uf8ff"), Asignaturas.class)
                 .build();
 
         FirebaseRecyclerAdapter<Asignaturas, AsignaturaHolder> adapter = new FirebaseRecyclerAdapter<Asignaturas, AsignaturaHolder>(opciones) {

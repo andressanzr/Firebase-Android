@@ -1,9 +1,5 @@
 package com.example.firebase_proyect.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -24,56 +20,53 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 public class AgregarGrupos extends AppCompatActivity {
     private EditText gruponumero, gruponombre;
     private String ID;
-    String IDexistente="";
+    String IDexistente = "";
 
     private DatabaseReference GroupsRef;
 
 
     private Button guardar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_grupos);
 
-        try{
-            IDexistente=getIntent().getStringExtra("IDgroup");
+        try {
+            IDexistente = getIntent().getStringExtra("IDgroup");
             getGroupInfo(IDexistente);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
 
-        GroupsRef= FirebaseDatabase.getInstance().getReference().child("Grupos");
+        GroupsRef = FirebaseDatabase.getInstance().getReference().child("Grupos");
 
         References();
         guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String groupNumber= gruponumero.getText().toString().trim();
-                String groupName= gruponombre.getText().toString().trim();
+                int groupNumber = Integer.parseInt(gruponumero.getText().toString().trim());
+                String groupName = gruponombre.getText().toString().trim();
                 //si el número es mayor que 3 le myestra un mensaje
-                if(TextUtils.isEmpty(groupNumber)||groupNumber.length()>3){
-                    Toast.makeText(AgregarGrupos.this,"Introduzca un número valido",Toast.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(groupName)){
-                    Toast.makeText(AgregarGrupos.this,"Se requiere un nombre para el curso",Toast.LENGTH_SHORT).show();
-                }else{
-                    addGroupIntoDB(groupNumber,groupName);
+                if (groupNumber <= 0) {
+                    Toast.makeText(AgregarGrupos.this, "Introduzca un número valido", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(groupName)) {
+                    Toast.makeText(AgregarGrupos.this, "Se requiere un nombre para el curso", Toast.LENGTH_SHORT).show();
+                } else {
+                    saveInfoGroupinBBDD(groupNumber, groupName);
                 }
             }
         });
-
-
-
-
-
-
     }
 
     private void getGroupInfo(final String IDexistente) {
-
-        GroupsRef= FirebaseDatabase.getInstance().getReference().child("Grupos");
+        GroupsRef = FirebaseDatabase.getInstance().getReference().child("Grupos");
 
         GroupsRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -89,21 +82,19 @@ public class AgregarGrupos extends AppCompatActivity {
                             if (idBd.equals(id)) {
 
 
-                                String numero = datosGrupo.getNumero();
+                                int numero = datosGrupo.getNumero();
                                 String nombregrup = datosGrupo.getNombre();
 
-                                gruponumero.setText(numero);
+                                gruponumero.setText(numero + "");
                                 gruponombre.setText(nombregrup);
                             }
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
                         }
                     });
                 }
-
             }
 
             @Override
@@ -111,48 +102,58 @@ public class AgregarGrupos extends AppCompatActivity {
 
             }
         });
-
-
     }
 
-    private void addGroupIntoDB(String groupNumber, String groupName) {
-        saveInfoGroupinBBDD(groupNumber,groupName);
-
-
-    }
-
-    private void saveInfoGroupinBBDD(String groupNumber, String groupName) {
-        if(IDexistente!=null){
-            ID=IDexistente;
-        }else{
+    private void saveInfoGroupinBBDD(final int groupNumber, final String groupName) {
+        if (IDexistente != null) {
+            ID = IDexistente;
+        } else {
             ID = GroupsRef.push().getKey();
         }
 
-
-        HashMap<String,Object> subjectMap= new HashMap<>();
-        subjectMap.put("ID",ID);
-        subjectMap.put("numero",groupNumber);
-        subjectMap.put("nombre",groupName);
-
-
-        GroupsRef.child(ID).updateChildren(subjectMap)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+        GroupsRef = FirebaseDatabase.getInstance().getReference().child("Grupos");
+        GroupsRef.orderByChild("numero").equalTo(groupNumber)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(AgregarGrupos.this,"Grupos actualizadas correctamente",Toast.LENGTH_SHORT).show();
-                            Intent intent=new Intent(AgregarGrupos.this,NavigationActivity.class).putExtra("fragNumber",1);
-                            startActivity(intent);
-                        }else{
-                            String mensaje= task.getException().toString();
-                            Toast.makeText(AgregarGrupos.this,"Error: "+ mensaje,Toast.LENGTH_SHORT).show();
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Toast.makeText(AgregarGrupos.this, "Numero de grupo repetido, introduzca otro", Toast.LENGTH_SHORT).show();
+                        } else {
+                            HashMap<String, Object> groupMap = new HashMap<>();
+                            groupMap.put("ID", ID);
+                            groupMap.put("numero", groupNumber);
+                            groupMap.put("nombre", groupName);
+
+                            GroupsRef.child(ID).updateChildren(groupMap)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(AgregarGrupos.this, "Grupos actualizadas correctamente", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(AgregarGrupos.this, MiGestion.class).putExtra("fragNumber", 2);
+                                                startActivity(intent);
+                                            } else {
+                                                String mensaje = task.getException().toString();
+                                                Toast.makeText(AgregarGrupos.this, "Error: " + mensaje, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                         }
                     }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+
                 });
+
+
     }
+
     private void References() {
-        gruponumero=(EditText)findViewById(R.id.textnumero);
-        gruponombre=(EditText)findViewById(R.id.textnombreGrupo);
-        guardar=(Button) findViewById(R.id.guardarDatos);
+        gruponumero = (EditText) findViewById(R.id.textnumero);
+        gruponombre = (EditText) findViewById(R.id.textnombreGrupo);
+        guardar = (Button) findViewById(R.id.guardarDatos);
     }
 }
