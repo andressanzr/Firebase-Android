@@ -75,7 +75,12 @@ public class RegistrarActivity extends AppCompatActivity {
                 String email = MailInicial.getText().toString();
                 String password = PasswordInicial.getText().toString();
                 String name = Nombre.getText().toString();
-                int age = Integer.parseInt(edad.getText().toString());
+                int age;
+                if (edad.getText().toString().equals("")) {
+                    age = 0;
+                } else {
+                    age = Integer.parseInt(edad.getText().toString());
+                }
                 String lastname = Apellidos.getText().toString();
 
                 if (email.isEmpty() || name.isEmpty() || password.isEmpty() || age <= 0 || lastname.isEmpty()) {
