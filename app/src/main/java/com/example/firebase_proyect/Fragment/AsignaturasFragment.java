@@ -121,7 +121,7 @@ public class AsignaturasFragment extends Fragment {
                 holder.Curso.setText(model.getCurso());
 
                 if (model.getFoto() == null) {
-                    Picasso.get().load(R.drawable.imagecurso).resize(80, 80).into(holder.foto);
+                    Picasso.get().load(R.drawable.imgcurso).resize(80, 80).into(holder.foto);
                 } else {
                     Picasso.get().load(model.getFoto()).resize(80, 80).into(holder.foto);
                 }

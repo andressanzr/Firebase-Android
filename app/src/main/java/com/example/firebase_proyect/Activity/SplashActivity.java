@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.firebase_proyect.R;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -23,6 +23,6 @@ public class SplashActivity extends AppCompatActivity {
                 finish();
 
             }
-        }, 2080);
+        }, 1000);
     }
 }

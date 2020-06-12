@@ -13,22 +13,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.firebase_proyect.R;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.HashMap;
 
@@ -102,7 +98,6 @@ public class RegistrarActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= 22) {
                     checkAndRequestForPermission();
                 } else {
-                    CropImage.activity(pickedImgUri).setAspectRatio(1, 1).start(RegistrarActivity.this);
                     openGallery();
                 }
             }

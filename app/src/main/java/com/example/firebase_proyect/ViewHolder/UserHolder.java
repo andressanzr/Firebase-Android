@@ -29,6 +29,5 @@ public class UserHolder extends RecyclerView.ViewHolder implements View.OnClickL
     @Override
     public void onClick(View v) {
         listener.onClick(v, getAdapterPosition(), false);
-
     }
 }

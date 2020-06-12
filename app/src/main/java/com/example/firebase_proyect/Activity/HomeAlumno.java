@@ -1,12 +1,5 @@
 package com.example.firebase_proyect.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,6 +25,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 public class HomeAlumno extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
@@ -43,11 +42,15 @@ public class HomeAlumno extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.inicio_alumno);
+
         setToolbar();
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+        if (user == null) {
+            startActivity(new Intent(getApplicationContext(), Login.class));
+        }
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layoutAlumno);
         navigationView = (NavigationView) findViewById(R.id.navviewAlumno);
         drawerLayout.closeDrawer(Gravity.LEFT);
@@ -80,7 +83,7 @@ public class HomeAlumno extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.reunionesAlumno:
-                        Intent a = new Intent(HomeAlumno.this, ReunionesActivity.class);
+                        Intent a = new Intent(HomeAlumno.this, ReunionesAlumnoActivity.class);
                         startActivity(a);
                         break;
                     case R.id.configuracionAlumno:

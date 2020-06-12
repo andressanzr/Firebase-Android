@@ -1,10 +1,10 @@
 package com.example.firebase_proyect.Activity;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -84,11 +84,10 @@ public class MiGestion extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_gestionar:
-                        Intent i = new Intent(MiGestion.this, ActivityGestionar.class);
-                        startActivity(i);
+                        drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.reuniones:
-                        Intent a = new Intent(MiGestion.this, ReunionesActivity.class);
+                        Intent a = new Intent(MiGestion.this, ReunionesProfesorActivity.class);
                         startActivity(a);
                         break;
                     case R.id.configuracion:
@@ -202,8 +201,6 @@ public class MiGestion extends AppCompatActivity {
     }
 
     private void setToolbar() {
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setActionBar(toolbar);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_home);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

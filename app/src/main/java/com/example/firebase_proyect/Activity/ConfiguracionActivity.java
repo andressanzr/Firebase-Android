@@ -1,6 +1,5 @@
 package com.example.firebase_proyect.Activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,19 +35,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.squareup.picasso.Picasso;
-import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ConfiguracionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DialogInterface.OnClickListener, View.OnClickListener {
+public class ConfiguracionActivity extends AppCompatActivity implements DialogInterface.OnClickListener, View.OnClickListener {
     private Button guardar;
     private EditText nombrepersona, apellidopersona, edadpersona, correopersona, nuevacontra;
     private CircleImageView imagenperfil;
@@ -55,8 +52,9 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
     private TextView userName;
     private CircleImageView profileImage;
 
+    private Uri pickedImgUri;
+
     private FirebaseUser user;
-    Uri imageUri;
     String myUrl = "";
     StorageTask uploadTask;
     private AlertDialog.Builder builder;
@@ -69,8 +67,6 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
     static String originalPassword;
 
     DrawerLayout drawerLayout;
-    ActionBarDrawerToggle actionBarDrawerToggle;
-    Toolbar toolbar;
 
     NavigationView navigationView;
 
@@ -83,58 +79,94 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-        drawerLayout = findViewById(R.id.drawer_perfil);
-        navigationView = findViewById(R.id.nav_view_perfil);
-        navigationView.setNavigationItemSelectedListener(this);
+        setToolbar();
+        getUsuarioInfo(user);
 
-        //Funcionamiento del icono hamburguesa
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
-        actionBarDrawerToggle.syncState();
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+            }
 
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().hide();
+            }
 
-        userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username);
-        profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_user_photo);
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                getSupportActionBar().show();
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.reunionesAlumno:
+                        Intent a = new Intent(ConfiguracionActivity.this, ReunionesAlumnoActivity.class);
+                        startActivity(a);
+                        break;
+                    case R.id.configuracionAlumno:
+                        Intent b = new Intent(ConfiguracionActivity.this, ConfiguracionActivity.class);
+                        startActivity(b);
+                        break;
+                    case R.id.cerrar_sesionAlumno:
+                        signOut();
+                        break;
+                }
+                return true;
+            }
+        });
 
         ID = user.getUid();
 
-
-        mAuth = FirebaseAuth.getInstance();
-        storageProfilePictureRef = FirebaseStorage.getInstance().getReference().child("Fotos de perfil");
-
+        storageProfilePictureRef = FirebaseStorage.getInstance().getReference().child("imagenesUsuarios");
 
         guardar.setOnClickListener(this);
-
 
         imagenperfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity(imageUri).setAspectRatio(1, 1)
-                        .start(ConfiguracionActivity.this);
+                openGallery();
             }
         });
-        getUsuarioInfo(user);
 
+    }
+
+    private void openGallery() {
+        //abre la intención de la galería y espera a que el usuario elija una imagen
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        startActivityForResult(galleryIntent, 2);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == Activity.RESULT_OK) {
-                imageUri = result.getUri();
-                imagenperfil.setImageURI(imageUri);
-            }
-        } else {
-            Toast.makeText(this, "Error, inténtelo de nuevo", Toast.LENGTH_SHORT).show();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // abrir el menu lateral
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
         }
-
+        return super.onOptionsItemSelected(item);
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == 2 && data != null) {
+            //el usuario ha elegido con éxito una imagen
+            // necesitamos guardar su referencia a una variable Uri
+            pickedImgUri = data.getData();
+            imagenperfil.setImageURI(pickedImgUri);
+        }
+    }
     @Override
     public void onClick(View view) {
 
@@ -169,7 +201,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_perfil);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layoutAlumno_configuracion);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -236,11 +268,12 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                                         guardaEmail(email, RootRef);
                                         guardaPassword(password, RootRef);
                                         actualizaPerfil(nombre, apellido, edad, RootRef);
-                                        actualizaImagen(imageUri, RootRef);
-                                        startActivity(new Intent(ConfiguracionActivity.this, Login.class));
-                                        finish();
-                                        mAuth.signOut();
+                                        actualizaImagen(pickedImgUri, RootRef);
                                         Toast.makeText(ConfiguracionActivity.this, "Perfil actualizado", Toast.LENGTH_SHORT).show();
+
+                                        mAuth.signOut();
+                                        startActivity(new Intent(ConfiguracionActivity.this, Login.class));
+
 
                                     } else {
                                         Toast.makeText(ConfiguracionActivity.this, "Verifique la contraseña, por favor", Toast.LENGTH_SHORT).show();
@@ -338,29 +371,6 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
         }
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        drawerLayout.closeDrawer(GravityCompat.START);
-        switch (item.getItemId()) {
-            case R.id.menu_gestionar:
-                Intent i = new Intent(this, ActivityGestionar.class);
-                startActivity(i);
-                break;
-            case R.id.reuniones:
-                Intent a = new Intent(this, ReunionesActivity.class);
-                startActivity(a);
-                break;
-            case R.id.configuracion:
-                Intent b = new Intent(this, ConfiguracionActivity.class);
-                startActivity(b);
-                break;
-            case R.id.cerrar_sesion:
-                signOut();
-                break;
-        }
-        return true;
-    }
-
     private void signOut() {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -402,6 +412,14 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             //Para extraer los datos de la BBDD con ayuda de la clase Usuarios
                             Users datosUsuario = snapShot.getValue(Users.class);
+                            // nav view vistas
+                            NavigationView navigationView = (NavigationView) findViewById(R.id.navviewAlumnoConfiguracion);
+                            View headerView = navigationView.getHeaderView(0);
+                            TextView navUsername = headerView.findViewById(R.id.nav_username);
+                            TextView navUserLastname = headerView.findViewById(R.id.nav_lastname);
+                            final ImageView navUserPhot = headerView.findViewById(R.id.nav_user_photo);
+
+
                             //Se obtiene la ID del usuario actual
                             String id = user.getUid();
                             //Se obtienen los string que representan las IDs en la BBDD
@@ -409,7 +427,6 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                             //Si el ID del usuario actual se corresponde con alguna de las guardadas,
                             //se obtienen los datos
                             if (idBBDD.equals(id)) {
-
                                 String fotoBBDD = null;
                                 //Se obtiene el url de ubicación de la foto en caso de estar guardado
                                 if (snapShot.child("foto").exists()) {
@@ -423,20 +440,24 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
                                 String passwordBBDD = datosUsuario.getPassword();
 
                                 if (fotoBBDD != null) {
-                                    //Glide.with(context).load(fotoBBDD).into(navUserPhot);
-                                    // TODO ARREGLAR CARGAR FOTO DE FIREBASE
                                     StorageReference storageReference = FirebaseStorage.getInstance().getReference();
                                     storageReference = storageReference.child("imagenesUsuarios/" + idBBDD + ".jpg");
                                     storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
                                             Picasso.get().load(uri).into(imagenperfil);
+                                            Picasso.get().load(uri).into(navUserPhot);
                                         }
                                     });
 
                                 } else {
                                     imagenperfil.setImageResource(R.drawable.seusuario);
                                 }
+
+                                //navbar datos
+                                navUserLastname.setText(apellidosBBDD);
+                                navUsername.setText(nombreBBDD);
+
                                 userName.setText(nombreBBDD + " " + apellidosBBDD);
                                 //Rellenamos los campos con los datos actuales
                                 nombrepersona.setText(nombreBBDD);
@@ -461,6 +482,10 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
         });
     }
 
+    private void setToolbar() {
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_home);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
     private void References() {
         imagenperfil = (CircleImageView) findViewById(R.id.fotonueva);
         nombrepersona = (EditText) findViewById(R.id.nombrePersona);
@@ -469,5 +494,13 @@ public class ConfiguracionActivity extends AppCompatActivity implements Navigati
         correopersona = (EditText) findViewById(R.id.correoPersona);
         nuevacontra = (EditText) findViewById(R.id.nuevaContrasena);
         guardar = (Button) findViewById(R.id.guardarDatos);
+
+        drawerLayout = findViewById(R.id.drawer_layoutAlumno_configuracion);
+        navigationView = findViewById(R.id.navviewAlumnoConfiguracion);
+
+        userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username);
+        profileImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_user_photo);
+
     }
+
 }

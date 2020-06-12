@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.firebase_proyect.Activity.AgregarUser;
-import com.example.firebase_proyect.Interface.ItemClickListener;
 import com.example.firebase_proyect.Models.Users;
 import com.example.firebase_proyect.R;
 import com.example.firebase_proyect.ViewHolder.UserHolder;
@@ -25,6 +24,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -141,9 +142,9 @@ public class UsersFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final UserHolder holder, final int position, final @NonNull Users model) {
                 holder.NombreApellidosAlumno.setText(model.getNombre() + " " + model.getApellido());
-                if (model.getTipoUsuario() == 0) {
+                if (model.getTipoUsuario() == 1) {
                     holder.TipoAlumno.setText("Alumno");
-                } else if (model.getTipoUsuario() == 1) {
+                } else if (model.getTipoUsuario() == 2) {
                     holder.TipoAlumno.setText("Profesor");
                 }
                 if (model.getFoto() == null) {
@@ -163,6 +164,7 @@ public class UsersFragment extends Fragment {
 
                     @Override
                     public void onClick(View view) {
+
                         //Muestra las dos opciones que tiene de modificar y eliminar
                         final CharSequence opciones[] = new CharSequence[]{
                                 "Modificar",
@@ -184,11 +186,20 @@ public class UsersFragment extends Fragment {
                                     androidx.appcompat.app.AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
                                     builder1.setTitle("Eliminar usuario");
                                     builder1.setMessage("¿Estas seguro que quieres eliminar al usuario de la lista?");
-                                    LayoutInflater inflater = getActivity().getLayoutInflater();
-
                                     builder1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+                                            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                                            FirebaseUser mUser = mAuth.getCurrentUser();
+                                            mUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(getContext(), "Usuario eliminada de FirebaseAuth", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+
                                             UsersRef
                                                     .child(model.getID())
                                                     .removeValue()
@@ -196,6 +207,7 @@ public class UsersFragment extends Fragment {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if (task.isSuccessful()) {
+
                                                                 Toast.makeText(getContext(), "Usuario eliminada de la lista", Toast.LENGTH_SHORT).show();
                                                                 notifyItemRemoved(position);
                                                             }
@@ -215,6 +227,7 @@ public class UsersFragment extends Fragment {
                             }
                         });
                         builder.show();
+
                     }
                 });
 

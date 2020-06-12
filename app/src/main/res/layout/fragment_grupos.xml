@@ -14,9 +14,9 @@
         android:src="@drawable/ic_add_fab_white"
         app:backgroundTint="#3700B3" />
 
-    <!-- TODO: Update blank fragment layout -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_groups"
+        android:layout_marginTop="52dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"/>
